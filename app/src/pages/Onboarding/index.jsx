@@ -123,7 +123,7 @@ export default function OnboardingPage({ onComplete }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between px-6 pt-12 pb-10 overflow-hidden relative" style={{ backgroundColor: COLORS.bgBase }}>
+    <div className="min-h-[100dvh] flex flex-col items-center justify-between px-6 pt-12 pb-10 overflow-hidden relative" style={{ backgroundColor: COLORS.bgBase }}>
       
       {/* Top Bar */}
       <div className="w-full flex justify-between items-center z-10">

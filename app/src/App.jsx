@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { Home, Library, Search, User, Camera, BrainCircuit } from 'lucide-react';
 
@@ -23,15 +23,7 @@ export default function App() {
   const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        await signInAnonymously(auth); // Fallback real auth per strict rules
-      } catch (e) {
-        console.error("Auth init failed", e);
-      }
-    };
-    initAuth();
-
+    // Strict authentication listener. Removed signInAnonymously bypass.
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setIsAuthChecking(false);
@@ -45,14 +37,19 @@ export default function App() {
     window.scrollTo(0, 0);
   };
 
-  if (isAuthChecking) return <div className="min-h-screen flex items-center justify-center font-bold text-3xl">Pagora.</div>;
+  if (isAuthChecking) return <div className="min-h-[100dvh] flex items-center justify-center font-bold text-3xl bg-pagora-base text-pagora-text">Pagora.</div>;
   
-  // Ensure we don't block the onboarding flow with the Auth screen
-  if (!user && currentRoute !== 'auth' && currentRoute !== 'onboarding') return <AuthPage onNavigate={navigate} />;
+  // Strict Route Guard: Ensure we don't block the onboarding flow, but force Auth if not logged in
+  if (!user && currentRoute !== 'auth' && currentRoute !== 'onboarding') {
+    // Sync state so rendering catches up to the forced block
+    setTimeout(() => setCurrentRoute('auth'), 0);
+    return <AuthPage onNavigate={navigate} />;
+  }
 
   const renderRoute = () => {
     switch (currentRoute) {
       case 'onboarding': return <OnboardingPage onComplete={() => navigate(!user ? 'auth' : 'home')} />;
+      case 'auth': return <AuthPage onNavigate={navigate} />;
       case 'home': return <HomePage onNavigate={navigate} user={user} />;
       case 'library': return <LibraryPage onNavigate={navigate} user={user} />;
       case 'reader': return <ReaderPage onNavigate={navigate} bookData={routeData} user={user} />;
@@ -65,7 +62,8 @@ export default function App() {
   const showBottomNav = !['reader', 'auth', 'onboarding'].includes(currentRoute);
 
   return (
-    <div className="w-full min-h-screen pb-24">
+    // Dynamic bottom padding and exact viewport height applied here
+    <div className={`w-full min-h-[100dvh] transition-all duration-300 ${showBottomNav ? 'pb-24' : ''}`}>
       {renderRoute()}
 
       {showBottomNav && (
