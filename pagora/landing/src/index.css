@@ -1,0 +1,8 @@
+
+@import "tailwindcss";
+@layer base {
+  html, body {
+    @apply bg-white text-[#111111] font-sans antialiased;
+  }
+}
+.hide-scrollbar::-webkit-scrollbar { display: none; }
