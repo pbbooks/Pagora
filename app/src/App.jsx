@@ -1,121 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { auth } from './firebase';
+import { Home, Library, Search, User, Camera, BrainCircuit } from 'lucide-react';
 
-function App() {
-  const [count, setCount] = useState(0)
+import AuthPage from './pages/Auth';
+import HomePage from './pages/Home';
+import LibraryPage from './pages/Library';
+import ReaderPage from './pages/Reader';
+import ScannerPage from './pages/Scanner';
+import AIPage from './pages/AI';
+
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [currentRoute, setCurrentRoute] = useState('home');
+  const [routeData, setRouteData] = useState(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        await signInAnonymously(auth); // Fallback real auth per strict rules
+      } catch (e) {
+        console.error("Auth init failed", e);
+      }
+    };
+    initAuth();
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsAuthChecking(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const navigate = (route, data = null) => {
+    setRouteData(data);
+    setCurrentRoute(route);
+    window.scrollTo(0, 0);
+  };
+
+  if (isAuthChecking) return <div className="min-h-screen flex items-center justify-center font-bold text-3xl">Pagora.</div>;
+  if (!user && currentRoute !== 'auth') return <AuthPage onNavigate={navigate} />;
+
+  const renderRoute = () => {
+    switch (currentRoute) {
+      case 'home': return <HomePage onNavigate={navigate} user={user} />;
+      case 'library': return <LibraryPage onNavigate={navigate} user={user} />;
+      case 'reader': return <ReaderPage onNavigate={navigate} bookData={routeData} user={user} />;
+      case 'scanner': return <ScannerPage onNavigate={navigate} user={user} />;
+      case 'ai': return <AIPage onNavigate={navigate} user={user} />;
+      default: return <HomePage onNavigate={navigate} user={user} />;
+    }
+  };
+
+  const showBottomNav = !['reader', 'auth'].includes(currentRoute);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="w-full min-h-screen pb-24">
+      {renderRoute()}
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {showBottomNav && (
+        <div className="fixed bottom-0 left-0 right-0 h-20 px-6 flex justify-between items-center z-50 backdrop-blur-xl border-t border-pagora-accent bg-pagora-elevated/90">
+          <NavBtn icon={<Home/>} label="Home" active={currentRoute === 'home'} onClick={() => navigate('home')} />
+          <NavBtn icon={<Library/>} label="Library" active={currentRoute === 'library'} onClick={() => navigate('library')} />
+          <NavBtn icon={<Camera/>} label="Scan" active={currentRoute === 'scanner'} onClick={() => navigate('scanner')} />
+          <NavBtn icon={<BrainCircuit/>} label="AI" active={currentRoute === 'ai'} onClick={() => navigate('ai')} />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      )}
+    </div>
+  );
 }
 
-export default App
+function NavBtn({ icon, label, active, onClick }) {
+  return (
+    <button onClick={onClick} className="flex flex-col items-center justify-center w-16 gap-1 transition-all">
+      <div className={`transition-transform duration-300 ${active ? '-translate-y-1 text-pagora-primary' : 'text-pagora-muted'}`}>
+        {React.cloneElement(icon, { size: 24, strokeWidth: active ? 2.5 : 2 })}
+      </div>
+      <span className={`text-[10px] font-bold ${active ? 'text-pagora-primary' : 'text-pagora-muted'}`}>{label}</span>
+    </button>
+  );
+}
