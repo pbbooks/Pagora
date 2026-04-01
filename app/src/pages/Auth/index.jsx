@@ -39,7 +39,7 @@ export default function AuthPage({ onNavigate }) {
     setError('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      onNavigate('home');
+      onNavigate('home'); // Returning users go straight to home
     } catch (err) {
       setError(err.message.replace('Firebase: ', ''));
     } finally {
@@ -51,8 +51,19 @@ export default function AuthPage({ onNavigate }) {
     setIsLoading(true);
     setError('');
     try {
-      await signInWithPopup(auth, googleProvider);
-      onNavigate('home');
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      
+      // Determine if this is a brand new user or returning user
+      const creationTime = new Date(user.metadata.creationTime).getTime();
+      const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
+      
+      // If created in the last 2 seconds, they are brand new -> Force Pricing Page
+      if (Math.abs(creationTime - lastSignInTime) < 2000) {
+        onNavigate('pricing');
+      } else {
+        onNavigate('home'); // Returning users bypass pricing
+      }
     } catch (err) {
       setError(err.message.replace('Firebase: ', ''));
     } finally {
@@ -123,7 +134,8 @@ export default function AuthPage({ onNavigate }) {
     setError('');
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      onNavigate('home');
+      // New signups explicitly routed to pricing to enforce subscription
+      onNavigate('pricing');
     } catch (err) {
       setError(err.message.replace('Firebase: ', ''));
     } finally {
@@ -150,43 +162,59 @@ export default function AuthPage({ onNavigate }) {
     }
   };
 
-  // --- Render Helpers (High-End SVG Illustrations) ---
+  // --- Render Helpers (High-End SVG Background Illustration) ---
 
   const AuthBackground = () => (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-start justify-center">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-center justify-center bg-[#FFFFFF]">
       {/* Soft elegant gradient mesh */}
       <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[60%] bg-gradient-to-br from-[#F8FAFC] to-transparent rounded-full blur-[100px] opacity-80"></div>
       <div className="absolute top-[30%] right-[-30%] w-[70%] h-[70%] bg-gradient-to-tl from-[#F1F5F9] to-transparent rounded-full blur-[120px] opacity-70"></div>
       
-      {/* Flowing Topographic Abstract Pages */}
-      <svg className="absolute w-[150%] h-[150%] opacity-[0.03] top-[-25%] left-[-25%]" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice">
-        <path d="M0,80 Q50,40 100,80 T200,80" fill="none" stroke="#111111" strokeWidth="0.3" />
-        <path d="M0,90 Q50,50 100,90 T200,90" fill="none" stroke="#111111" strokeWidth="0.3" />
-        <path d="M0,100 Q50,60 100,100 T200,100" fill="none" stroke="#111111" strokeWidth="0.3" />
-        <path d="M0,110 Q50,70 100,110 T200,110" fill="none" stroke="#111111" strokeWidth="0.3" />
-        <path d="M0,120 Q50,80 100,120 T200,120" fill="none" stroke="#111111" strokeWidth="0.3" />
-      </svg>
-    </div>
-  );
+      {/* High-End Book and Pen Illustration */}
+      <svg className="absolute w-[160%] h-[160%] sm:w-[120%] sm:h-[120%] opacity-[0.035]" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Left Page */}
+        <motion.path 
+          d="M 400 650 C 250 680 150 600 150 450 L 150 200 C 150 350 250 420 400 350 Z" 
+          fill="none" stroke="#111111" strokeWidth="3"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, ease: "easeInOut" }}
+        />
+        {/* Right Page */}
+        <motion.path 
+          d="M 400 650 C 550 680 650 600 650 450 L 650 200 C 650 350 550 420 400 350 Z" 
+          fill="none" stroke="#111111" strokeWidth="3"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, ease: "easeInOut", delay: 0.5 }}
+        />
+        {/* Center Spine */}
+        <motion.path d="M 400 350 L 400 650" stroke="#111111" strokeWidth="3" strokeDasharray="6 6" />
+        
+        {/* Flowing Text Lines on Left Page */}
+        <motion.path d="M 220 380 Q 280 400 350 370" stroke="#111111" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 4 }} />
+        <motion.path d="M 200 440 Q 280 460 360 420" stroke="#111111" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 4, delay: 1 }} />
+        <motion.path d="M 180 500 Q 260 520 340 470" stroke="#111111" strokeWidth="2.5" strokeLinecap="round" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ repeat: Infinity, duration: 4, delay: 2 }} />
+        
+        {/* Elegant Quill / Fountain Pen */}
+        <motion.g 
+          initial={{ y: -80, x: 80, opacity: 0 }} 
+          animate={{ y: 0, x: 0, opacity: 1 }} 
+          transition={{ duration: 2.5, ease: "easeOut", delay: 1.5 }}
+        >
+          <path d="M 600 200 L 480 400 L 510 410 L 650 250 Z" fill="#F8FAFC" stroke="#111111" strokeWidth="2" />
+          <path d="M 480 400 L 460 450 L 510 410 Z" fill="#111111" />
+          <path d="M 600 200 C 650 120 720 150 720 150 C 720 150 680 210 650 250" fill="none" stroke="#111111" strokeWidth="2" />
+        </motion.g>
 
-  const HeroIllustration = () => (
-    <div className="w-full flex justify-center mb-8 relative z-10">
-      <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Abstract Architectural Book Arch */}
-        <motion.rect x="30" y="20" width="60" height="80" rx="30" fill="#F5F5F7" 
-           initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} />
-        <motion.path d="M40 100V50C40 38.9543 48.9543 30 60 30C71.0457 30 80 38.9543 80 50V100" stroke="#111111" strokeWidth="2.5"
-           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }} />
-        <motion.circle cx="60" cy="50" r="6" fill="#1E6FEA" 
-           initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5, delay: 1, type: "spring" }} />
-        <motion.path d="M60 56V100" stroke="#111111" strokeWidth="2.5" strokeDasharray="4 4"
-           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 1.2, ease: "easeOut" }} />
+        {/* Decorative Flowing Ink Curve */}
+        <motion.path 
+          d="M 460 450 C 400 550 300 450 200 500 C 100 550 250 650 350 600" 
+          stroke="#111111" strokeWidth="2.5" fill="none" strokeLinecap="round"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 4, delay: 2.5, ease: "easeInOut" }}
+        />
       </svg>
     </div>
   );
 
   const SocialButtons = () => (
-    <div className="w-full flex flex-col gap-3 mt-6 z-10">
+    <div className="w-full flex flex-col gap-3 mt-6 z-10 relative">
       <div className="flex items-center gap-3 mb-2">
         <div className="flex-1 h-[1px] bg-[#EAEAEA]"></div>
         <span className="text-[11px] font-bold text-[#888888] uppercase tracking-widest">OR</span>
@@ -196,7 +224,7 @@ export default function AuthPage({ onNavigate }) {
       <button 
         type="button" 
         onClick={handleGoogleSignIn}
-        className="w-full bg-[#F5F5F7] text-[#111111] py-[15px] rounded-xl font-semibold text-[14px] flex items-center justify-center gap-3 active:scale-[0.98] transition-transform"
+        className="w-full bg-[#F5F5F7] text-[#111111] py-[15px] rounded-xl font-semibold text-[14px] flex items-center justify-center gap-3 active:scale-[0.98] transition-transform outline-none shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -210,7 +238,7 @@ export default function AuthPage({ onNavigate }) {
       <button 
         type="button" 
         onClick={() => setError("Apple Sign-In requires Developer Account setup.")}
-        className="w-full bg-[#F5F5F7] text-[#111111] py-[15px] rounded-xl font-semibold text-[14px] flex items-center justify-center gap-3 active:scale-[0.98] transition-transform"
+        className="w-full bg-[#F5F5F7] text-[#111111] py-[15px] rounded-xl font-semibold text-[14px] flex items-center justify-center gap-3 active:scale-[0.98] transition-transform outline-none shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.05 2.53.68 3.14.68.65 0 2.02-.74 3.55-.61 1.54.12 2.84.77 3.59 1.94-3.11 1.83-2.6 5.86.41 7.05-.72 1.6-1.57 3.08-2.69 3.91zm-3.69-14.9c-.19-1.63.58-3.25 1.76-4.22 1.25 1.15 3.01 2.72 2.76 4.41-1.49.12-3.11-.79-4.52-1.8z" />
@@ -226,7 +254,7 @@ export default function AuthPage({ onNavigate }) {
       <AuthBackground />
 
       {/* Dynamic Navigation Header */}
-      <div className="w-full px-6 pt-12 pb-2 flex items-center min-h-[80px] z-10">
+      <div className="w-full px-6 pt-10 pb-2 flex items-center min-h-[80px] z-20 relative">
         {view !== 'login' && (
           <button 
             onClick={() => {
@@ -241,7 +269,7 @@ export default function AuthPage({ onNavigate }) {
         )}
       </div>
 
-      <div className="flex-1 w-full px-8 pb-10 max-w-md mx-auto flex flex-col pt-2 z-10">
+      <div className="flex-1 w-full px-8 pb-10 max-w-md mx-auto flex flex-col justify-center pt-2 z-10 relative">
         <AnimatePresence mode="wait">
           
           {/* LOGIN VIEW */}
@@ -251,8 +279,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full"
             >
-              <HeroIllustration />
-              <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-3">Welcome back</h1>
+              <h1 className="text-[44px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-3">Welcome back</h1>
               <p className="text-[13px] text-[#888888] font-sans text-center mb-8 px-4 leading-relaxed">Access your library, reading stats, and personalized book recommendations.</p>
 
               <form onSubmit={handleLoginSubmit} className="flex flex-col gap-4">
@@ -305,8 +332,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full"
             >
-              <HeroIllustration />
-              <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-3">Sign up Account</h1>
+              <h1 className="text-[44px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-3">Sign up Account</h1>
               <p className="text-[13px] text-[#888888] font-sans text-center mb-8 px-4 leading-relaxed">Join now for a faster, smarter reading experience.</p>
 
               <form onSubmit={handleSignupEmailSubmit} className="flex flex-col gap-4">
@@ -344,7 +370,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full pt-2"
             >
-              <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-4">Enter OTP Code</h1>
+              <h1 className="text-[44px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-4">Enter OTP Code</h1>
               <p className="text-[13px] text-[#888888] font-sans text-center mb-10 px-2 leading-relaxed">
                 Check your email. We've sent a one-time verification code to <span className="font-bold text-[#111111]">{email}</span>.
               </p>
@@ -385,7 +411,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full pt-2"
             >
-              <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-4">Secure Account</h1>
+              <h1 className="text-[44px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-4">Secure Account</h1>
               <p className="text-[13px] text-[#888888] font-sans text-center mb-10 px-2 leading-relaxed">
                 Your email <span className="font-bold text-[#111111]">{email}</span> is verified. Set a strong password to protect your library.
               </p>
@@ -418,7 +444,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full pt-2"
             >
-              <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-4">Reset Password</h1>
+              <h1 className="text-[44px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-4">Reset Password</h1>
               
               {!resetSent ? (
                 <>
