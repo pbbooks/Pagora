@@ -1,3 +1,5 @@
-
 import PocketBase from 'pocketbase';
-export const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL || 'http://127.0.0.1:8090');
+
+// Establishing the singleton connection for real-time storage
+const url = import.meta.env.VITE_POCKETBASE_URL;
+export const pb = new PocketBase(url);
