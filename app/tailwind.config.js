@@ -7,18 +7,31 @@ export default {
   theme: {
     extend: {
       colors: {
-        'pagora-base': '#0C1016',
-        'pagora-elevated': '#0D1116',
-        'pagora-card': '#212830',
-        'pagora-accent': '#202930',
-        'pagora-blue-deep': '#1B3A67',
+        // Light Editorial Theme (Primary Layout mapped to base variables)
+        'pagora-base': '#FFFFFF',
+        'pagora-elevated': '#FAFAFA',
+        'pagora-border': '#EAEAEA',
+        'pagora-text': '#111111',
+        'pagora-muted': '#888888',
+        
+        // Exact Brand Colors & Dark Elements Preserved
         'pagora-primary': '#1E6FEA',
         'pagora-hover': '#4290F3',
-        'pagora-text': '#EFF0E6',
-        'pagora-muted': '#D5D6D0',
+        'pagora-blue-deep': '#1B3A67',
+        'pagora-dark-card': '#212830',
+        'pagora-dark-base': '#0C1016',
+        'pagora-dark-elevated': '#0D1116',
+        'pagora-dark-accent': '#202930',
+        'pagora-light-text': '#EFF0E6',
+        'pagora-light-muted': '#D5D6D0',
       },
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+      },
+      boxShadow: {
+        'book': '0 20px 40px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.08)',
+        'pill': '0 4px 14px 0 rgba(0, 0, 0, 0.05)',
       },
       keyframes: {
         'fade-in': {

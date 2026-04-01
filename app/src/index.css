@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Removed @apply to permanently fix VS Code 'unknownAtRules' linting error.
+   Background, text color, and antialiased fonts are already applied directly 
+   to the <body> tag in index.html. */
+
+::selection {
+  background-color: #1E6FEA; /* pagora-primary */
+  color: #FFFFFF;
+}
+
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
