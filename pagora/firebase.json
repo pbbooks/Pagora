@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "pbpagoraweb",
     "public": "dist",
     "ignore": [
       "firebase.json",
