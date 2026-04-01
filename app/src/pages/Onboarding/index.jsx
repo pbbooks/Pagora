@@ -100,12 +100,12 @@ const slides = [
     subtitle: "Select the styles you love to fine-tune your completely personalized book recommendations.",
     cover: (
       <div className="w-full h-full bg-[#FAFAFA] border border-[#EAEAEA] p-3 flex flex-wrap content-center justify-center gap-2 relative overflow-hidden">
-        <motion.div animate={{y:[-2, 2, -2]}} transition={{repeat: Infinity, duration: 3}} className="px-3 py-1.5 bg-white border border-[#EAEAEA] rounded-full text-[10px] shadow-pill font-sans text-[#111111] font-medium">Thriller</motion.div>
-        <motion.div animate={{y:[2, -2, 2]}} transition={{repeat: Infinity, duration: 3.5, delay: 0.2}} className="px-3 py-1.5 bg-[#111111] text-white rounded-full text-[10px] shadow-pill font-sans font-medium">Sci-Fi & Fantasy</motion.div>
-        <motion.div animate={{y:[-1.5, 1.5, -1.5]}} transition={{repeat: Infinity, duration: 2.8, delay: 0.5}} className="px-3 py-1.5 bg-white border border-[#EAEAEA] rounded-full text-[10px] shadow-pill font-sans text-[#111111] font-medium">Romance</motion.div>
-        <motion.div animate={{y:[1.5, -1.5, 1.5]}} transition={{repeat: Infinity, duration: 3.2, delay: 0.1}} className="px-3 py-1.5 bg-[#1E6FEA] text-white rounded-full text-[10px] shadow-pill font-sans font-medium">Non-Fiction</motion.div>
-        <motion.div animate={{y:[-2, 2, -2]}} transition={{repeat: Infinity, duration: 4, delay: 0.8}} className="px-3 py-1.5 bg-white border border-[#EAEAEA] rounded-full text-[10px] shadow-pill font-sans text-[#111111] font-medium">History</motion.div>
-        <motion.div animate={{y:[2, -2, 2]}} transition={{repeat: Infinity, duration: 3.7, delay: 0.4}} className="px-3 py-1.5 bg-[#FF6536] text-white rounded-full text-[10px] shadow-pill font-sans font-medium">Self-Help</motion.div>
+        <motion.div animate={{y:[-2, 2, -2]}} transition={{repeat: Infinity, duration: 3}} className="px-3 py-1.5 bg-white border border-[#EAEAEA] rounded-full text-[10px] shadow-[0_4px_14px_rgba(0,0,0,0.05)] font-sans text-[#111111] font-medium">Thriller</motion.div>
+        <motion.div animate={{y:[2, -2, 2]}} transition={{repeat: Infinity, duration: 3.5, delay: 0.2}} className="px-3 py-1.5 bg-[#111111] text-white rounded-full text-[10px] shadow-[0_4px_14px_rgba(0,0,0,0.05)] font-sans font-medium">Sci-Fi & Fantasy</motion.div>
+        <motion.div animate={{y:[-1.5, 1.5, -1.5]}} transition={{repeat: Infinity, duration: 2.8, delay: 0.5}} className="px-3 py-1.5 bg-white border border-[#EAEAEA] rounded-full text-[10px] shadow-[0_4px_14px_rgba(0,0,0,0.05)] font-sans text-[#111111] font-medium">Romance</motion.div>
+        <motion.div animate={{y:[1.5, -1.5, 1.5]}} transition={{repeat: Infinity, duration: 3.2, delay: 0.1}} className="px-3 py-1.5 bg-[#1E6FEA] text-white rounded-full text-[10px] shadow-[0_4px_14px_rgba(0,0,0,0.05)] font-sans font-medium">Non-Fiction</motion.div>
+        <motion.div animate={{y:[-2, 2, -2]}} transition={{repeat: Infinity, duration: 4, delay: 0.8}} className="px-3 py-1.5 bg-white border border-[#EAEAEA] rounded-full text-[10px] shadow-[0_4px_14px_rgba(0,0,0,0.05)] font-sans text-[#111111] font-medium">History</motion.div>
+        <motion.div animate={{y:[2, -2, 2]}} transition={{repeat: Infinity, duration: 3.7, delay: 0.4}} className="px-3 py-1.5 bg-[#FF6536] text-white rounded-full text-[10px] shadow-[0_4px_14px_rgba(0,0,0,0.05)] font-sans font-medium">Self-Help</motion.div>
         <div className="absolute bottom-6 text-[#888888] text-[10px] uppercase tracking-[0.2em] font-bold z-10 w-full text-center">Taste Profile</div>
       </div>
     )
@@ -129,12 +129,38 @@ const slides = [
   },
   {
     id: 7,
+    match: "Goals",
+    title: "Set your own\nreading goals",
+    subtitle: "Challenge yourself. Set daily reading goals and watch your personal progress soar.",
+    cover: (
+      <div className="w-full h-full bg-[#4C1D95] p-5 flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="relative w-24 h-24 flex items-center justify-center">
+          {/* Background Ring */}
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
+            <motion.circle 
+              cx="50" cy="50" r="40" fill="none" stroke="#38BDF8" strokeWidth="8" strokeLinecap="round"
+              strokeDasharray="251.2"
+              initial={{ strokeDashoffset: 251.2 }}
+              animate={{ strokeDashoffset: 60 }} // Approx 75% complete
+              transition={{ duration: 2, ease: "easeOut", repeat: Infinity, repeatType: "reverse", repeatDelay: 1 }}
+              transform="rotate(-90 50 50)"
+            />
+          </svg>
+          <div className="text-white font-serif font-bold text-2xl z-10">75%</div>
+        </div>
+        <div className="absolute bottom-6 text-sky-200 text-[10px] uppercase tracking-[0.2em] font-bold z-10 w-full text-center">Daily Target</div>
+      </div>
+    )
+  },
+  {
+    id: 8,
     match: "Font",
     title: "Read your way,\nevery single day",
     subtitle: "Customize typography, line-height, and margins for the absolute perfect reading experience.",
     cover: (
       <div className="w-full h-full bg-[#F8FAFC] border border-[#EAEAEA] p-5 flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100/[0.5] bg-[bottom_1px_center]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#E2E8F0_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
         <motion.div 
           className="text-[#111111] font-serif text-[72px] leading-none mb-4 z-10 tracking-tight"
           animate={{ scale: [1, 1.05, 1] }}
@@ -154,7 +180,7 @@ const slides = [
     )
   },
   {
-    id: 8,
+    id: 9,
     match: "Dark",
     title: "Easy on the eyes,\nday or night",
     subtitle: "Automatic dark mode and beautiful sepia themes reduce eye strain during late-night reads.",
@@ -174,7 +200,7 @@ const slides = [
     )
   },
   {
-    id: 9,
+    id: 10,
     match: "Sync",
     title: "Everything in\none place",
     subtitle: "Organize your collections, track reading progress, and sync across all your devices.",
@@ -202,7 +228,7 @@ const slides = [
     )
   },
   {
-    id: 10,
+    id: 11,
     match: "Offline",
     title: "Take your books\nanywhere you go",
     subtitle: "Download your entire library for seamless, uninterrupted reading without the internet.",
@@ -221,7 +247,7 @@ const slides = [
     )
   },
   {
-    id: 11,
+    id: 12,
     match: "93%",
     title: "Curated for the\ncurious mind",
     subtitle: "Explore high-fidelity digital books with pixel-perfect editorial typography and layouts.",
@@ -237,7 +263,7 @@ const slides = [
     )
   },
   {
-    id: 12,
+    id: 13,
     match: "99%",
     title: "Ready to start\nyour journey?",
     subtitle: "Join Pagora today and experience the absolute future of reading and literature.",
@@ -291,7 +317,7 @@ export default function OnboardingPage({ onComplete }) {
   if (isLaunching) {
     return (
       <motion.div 
-        className="h-[100dvh] w-full bg-[#111111] flex flex-col items-center justify-center"
+        className="fixed inset-0 w-full bg-[#111111] flex flex-col items-center justify-center z-50"
         exit={{ opacity: 0 }}
         transition={{ duration: 0.8 }}
       >
@@ -308,24 +334,25 @@ export default function OnboardingPage({ onComplete }) {
   }
 
   // 2. Main Onboarding Flow
+  // USING 'fixed inset-0' to permanently kill the scroll/overflow bug on mobile browsers
   return (
-    <div className="h-[100dvh] flex flex-col bg-pagora-base w-full overflow-hidden select-none relative">
+    <div className="fixed inset-0 flex flex-col bg-[#FFFFFF] w-full overflow-hidden select-none">
       
       {/* Fixed Top Bar (Includes Skip Button) */}
-      <div className="shrink-0 w-full flex justify-between items-center px-6 pt-10 pb-2 z-20">
-        <div className="font-serif font-bold text-xl tracking-tight text-pagora-text">Pagora.</div>
+      <div className="shrink-0 w-full flex justify-between items-center px-6 h-20 pt-4 z-20">
+        <div className="font-serif font-bold text-xl tracking-tight text-[#111111]">Pagora.</div>
         {currentIndex < slides.length - 1 && (
           <button 
             onClick={finishOnboarding} 
-            className="text-sm font-semibold tracking-wide text-pagora-muted hover:text-pagora-text transition-colors"
+            className="text-[15px] font-bold tracking-wide text-[#888888] hover:text-[#111111] transition-colors px-2 py-1 outline-none tap-highlight-transparent"
           >
             Skip
           </button>
         )}
       </div>
 
-      {/* Dynamic 3D Coverflow Carousel (Fills available space safely) */}
-      <div className="flex-1 min-h-0 w-full relative flex items-center justify-center pt-4">
+      {/* Dynamic 3D Coverflow Carousel (Responsive Percentage Height) */}
+      <div className="flex-1 w-full relative flex items-center justify-center">
         {slides.map((slide, index) => {
           const offset = index - currentIndex;
           const isCenter = offset === 0;
@@ -349,8 +376,8 @@ export default function OnboardingPage({ onComplete }) {
               dragElastic={0.15}
               onDragEnd={handleDragEnd}
             >
-              {/* Carousel bounds restricted via h-full inside flex to prevent overflow */}
-              <div className="w-full h-[260px] sm:h-[300px] rounded-lg shadow-book overflow-hidden bg-white cursor-grab active:cursor-grabbing border border-pagora-border/50">
+              {/* Carousel bounds dynamically restricted via vh to fit small screens */}
+              <div className="w-full h-[40vh] min-h-[240px] max-h-[300px] rounded-lg shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] overflow-hidden bg-white cursor-grab active:cursor-grabbing border border-[#EAEAEA]">
                 {slide.cover}
               </div>
 
@@ -358,10 +385,10 @@ export default function OnboardingPage({ onComplete }) {
                 animate={{ opacity: isCenter ? 1 : 0.4 }}
                 className="mt-4 flex justify-between items-end px-1"
               >
-                <div className="text-[11px] leading-tight text-pagora-muted w-[90px] font-medium tracking-tight">
+                <div className="text-[11px] leading-tight text-[#888888] w-[90px] font-medium tracking-tight">
                   {slide.match.includes('%') ? <><span className="hidden sm:inline">Your read</span><br/>match score</> : <><span className="hidden sm:inline">Pagora App</span><br/>Feature</>}
                 </div>
-                <div className="font-serif text-[34px] leading-none font-bold text-pagora-text tracking-tighter">
+                <div className="font-serif text-[34px] leading-none font-bold text-[#111111] tracking-tighter">
                   {slide.match}
                 </div>
               </motion.div>
@@ -370,11 +397,11 @@ export default function OnboardingPage({ onComplete }) {
         })}
       </div>
 
-      {/* Fixed Bottom Footer Region (Ensures button is strictly visible) */}
-      <div className="shrink-0 flex flex-col items-center w-full px-6 pb-10 pt-2 z-20">
+      {/* Fixed Bottom Footer Region (Button visibility absolutely guaranteed) */}
+      <div className="shrink-0 flex flex-col items-center w-full px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-2 z-20">
         
         {/* Typography Content */}
-        <div className="flex flex-col items-center text-center h-[90px] sm:h-[110px] w-full">
+        <div className="flex flex-col items-center text-center h-[90px] w-full">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
@@ -384,10 +411,10 @@ export default function OnboardingPage({ onComplete }) {
               transition={{ duration: 0.25 }}
               className="flex flex-col items-center w-full"
             >
-              <h1 className="font-serif text-[28px] sm:text-[30px] leading-[1.05] font-bold text-pagora-text tracking-tight mb-2 whitespace-pre-line">
+              <h1 className="font-serif text-[26px] sm:text-[28px] leading-[1.05] font-bold text-[#111111] tracking-tight mb-2 whitespace-pre-line">
                 {slides[currentIndex].title}
               </h1>
-              <p className="font-sans text-[12px] sm:text-[13px] text-pagora-muted leading-relaxed max-w-[300px]">
+              <p className="font-sans text-[13px] text-[#888888] leading-relaxed max-w-[300px]">
                 {slides[currentIndex].subtitle}
               </p>
             </motion.div>
@@ -395,19 +422,19 @@ export default function OnboardingPage({ onComplete }) {
         </div>
 
         {/* Pagination Dots */}
-        <div className="flex justify-center gap-[4px] mb-6 mt-2 flex-wrap px-8">
+        <div className="flex justify-center gap-[4px] mb-5 mt-1 flex-wrap px-8">
           {slides.map((_, idx) => (
             <div 
               key={idx} 
-              className={`h-[4px] rounded-full transition-all duration-300 ${currentIndex === idx ? 'w-[14px] bg-pagora-text' : 'w-[4px] bg-pagora-border'}`}
+              className={`h-[4px] rounded-full transition-all duration-300 ${currentIndex === idx ? 'w-[14px] bg-[#111111]' : 'w-[4px] bg-[#EAEAEA]'}`}
             />
           ))}
         </div>
 
-        {/* Primary Action Button (Strictly Dark BG and Light Text) */}
+        {/* Primary Action Button (Hardcoded to strictly Dark BG and White Text) */}
         <button
           onClick={handleNext}
-          className="w-full bg-pagora-text text-white py-[18px] rounded-full font-sans font-semibold text-[16px] shadow-pill active:scale-[0.98] transition-transform flex items-center justify-center outline-none tap-highlight-transparent"
+          className="w-full bg-[#111111] text-[#FFFFFF] py-[18px] rounded-full font-sans font-semibold text-[16px] shadow-[0_8px_16px_rgba(0,0,0,0.15)] active:scale-[0.98] transition-transform flex items-center justify-center outline-none tap-highlight-transparent"
         >
           {currentIndex === slides.length - 1 ? 'Start Reading' : 'Continue'}
         </button>
