@@ -9,10 +9,16 @@ import LibraryPage from './pages/Library';
 import ReaderPage from './pages/Reader';
 import ScannerPage from './pages/Scanner';
 import AIPage from './pages/AI';
+import OnboardingPage from './pages/Onboarding';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [currentRoute, setCurrentRoute] = useState('home');
+  
+  // Intercept first-time users strictly via localStorage
+  const [currentRoute, setCurrentRoute] = useState(() => {
+    return localStorage.getItem('pagora_onboarded') === 'true' ? 'home' : 'onboarding';
+  });
+  
   const [routeData, setRouteData] = useState(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
 
@@ -40,10 +46,13 @@ export default function App() {
   };
 
   if (isAuthChecking) return <div className="min-h-screen flex items-center justify-center font-bold text-3xl">Pagora.</div>;
-  if (!user && currentRoute !== 'auth') return <AuthPage onNavigate={navigate} />;
+  
+  // Ensure we don't block the onboarding flow with the Auth screen
+  if (!user && currentRoute !== 'auth' && currentRoute !== 'onboarding') return <AuthPage onNavigate={navigate} />;
 
   const renderRoute = () => {
     switch (currentRoute) {
+      case 'onboarding': return <OnboardingPage onComplete={() => navigate(!user ? 'auth' : 'home')} />;
       case 'home': return <HomePage onNavigate={navigate} user={user} />;
       case 'library': return <LibraryPage onNavigate={navigate} user={user} />;
       case 'reader': return <ReaderPage onNavigate={navigate} bookData={routeData} user={user} />;
@@ -53,7 +62,7 @@ export default function App() {
     }
   };
 
-  const showBottomNav = !['reader', 'auth'].includes(currentRoute);
+  const showBottomNav = !['reader', 'auth', 'onboarding'].includes(currentRoute);
 
   return (
     <div className="w-full min-h-screen pb-24">
