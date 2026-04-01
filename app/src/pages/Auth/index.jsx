@@ -140,6 +140,7 @@ export default function AuthPage({ onNavigate }) {
     setIsLoading(true);
     setError('');
     try {
+      // Triggers the official Firebase email notification securely
       await sendPasswordResetEmail(auth, email);
       setResetSent(true);
     } catch (err) {
@@ -149,34 +150,43 @@ export default function AuthPage({ onNavigate }) {
     }
   };
 
-  // --- Render Helpers ---
+  // --- Render Helpers (High-End SVG Illustrations) ---
 
-  // High-End Animated Editorial Logo
-  const PremiumLogo = () => (
-    <motion.div 
-      initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-16 h-16 bg-[#111111] rounded-2xl flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.15)] mb-8 mx-auto relative overflow-hidden"
-    >
-      <motion.svg 
-        viewBox="0 0 24 24" 
-        className="w-8 h-8 text-white z-10" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="square"
-        animate={{ y: [-2, 2, -2] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-      >
-        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-      </motion.svg>
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent"></div>
-    </motion.div>
+  const AuthBackground = () => (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden flex items-start justify-center">
+      {/* Soft elegant gradient mesh */}
+      <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[60%] bg-gradient-to-br from-[#F8FAFC] to-transparent rounded-full blur-[100px] opacity-80"></div>
+      <div className="absolute top-[30%] right-[-30%] w-[70%] h-[70%] bg-gradient-to-tl from-[#F1F5F9] to-transparent rounded-full blur-[120px] opacity-70"></div>
+      
+      {/* Flowing Topographic Abstract Pages */}
+      <svg className="absolute w-[150%] h-[150%] opacity-[0.03] top-[-25%] left-[-25%]" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice">
+        <path d="M0,80 Q50,40 100,80 T200,80" fill="none" stroke="#111111" strokeWidth="0.3" />
+        <path d="M0,90 Q50,50 100,90 T200,90" fill="none" stroke="#111111" strokeWidth="0.3" />
+        <path d="M0,100 Q50,60 100,100 T200,100" fill="none" stroke="#111111" strokeWidth="0.3" />
+        <path d="M0,110 Q50,70 100,110 T200,110" fill="none" stroke="#111111" strokeWidth="0.3" />
+        <path d="M0,120 Q50,80 100,120 T200,120" fill="none" stroke="#111111" strokeWidth="0.3" />
+      </svg>
+    </div>
+  );
+
+  const HeroIllustration = () => (
+    <div className="w-full flex justify-center mb-8 relative z-10">
+      <svg width="100" height="100" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Abstract Architectural Book Arch */}
+        <motion.rect x="30" y="20" width="60" height="80" rx="30" fill="#F5F5F7" 
+           initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, ease: "easeOut" }} />
+        <motion.path d="M40 100V50C40 38.9543 48.9543 30 60 30C71.0457 30 80 38.9543 80 50V100" stroke="#111111" strokeWidth="2.5"
+           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.5, ease: "easeInOut", delay: 0.2 }} />
+        <motion.circle cx="60" cy="50" r="6" fill="#1E6FEA" 
+           initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 0.5, delay: 1, type: "spring" }} />
+        <motion.path d="M60 56V100" stroke="#111111" strokeWidth="2.5" strokeDasharray="4 4"
+           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, delay: 1.2, ease: "easeOut" }} />
+      </svg>
+    </div>
   );
 
   const SocialButtons = () => (
-    <div className="w-full flex flex-col gap-3 mt-6">
+    <div className="w-full flex flex-col gap-3 mt-6 z-10">
       <div className="flex items-center gap-3 mb-2">
         <div className="flex-1 h-[1px] bg-[#EAEAEA]"></div>
         <span className="text-[11px] font-bold text-[#888888] uppercase tracking-widest">OR</span>
@@ -213,8 +223,10 @@ export default function AuthPage({ onNavigate }) {
   return (
     <div className="fixed inset-0 w-full bg-[#FFFFFF] flex flex-col overflow-y-auto">
       
+      <AuthBackground />
+
       {/* Dynamic Navigation Header */}
-      <div className="w-full px-6 pt-12 pb-2 flex items-center min-h-[80px]">
+      <div className="w-full px-6 pt-12 pb-2 flex items-center min-h-[80px] z-10">
         {view !== 'login' && (
           <button 
             onClick={() => {
@@ -229,7 +241,7 @@ export default function AuthPage({ onNavigate }) {
         )}
       </div>
 
-      <div className="flex-1 w-full px-8 pb-10 max-w-md mx-auto flex flex-col pt-2">
+      <div className="flex-1 w-full px-8 pb-10 max-w-md mx-auto flex flex-col pt-2 z-10">
         <AnimatePresence mode="wait">
           
           {/* LOGIN VIEW */}
@@ -239,7 +251,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full"
             >
-              <PremiumLogo />
+              <HeroIllustration />
               <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-3">Welcome back</h1>
               <p className="text-[13px] text-[#888888] font-sans text-center mb-8 px-4 leading-relaxed">Access your library, reading stats, and personalized book recommendations.</p>
 
@@ -273,14 +285,14 @@ export default function AuthPage({ onNavigate }) {
 
                 {error && <p className="text-[#FF3B30] text-[13px] flex items-center gap-1 font-semibold"><AlertCircle size={14}/> {error}</p>}
 
-                <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-2 active:scale-[0.98] transition-transform shadow-pill outline-none">
+                <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-2 active:scale-[0.98] transition-transform shadow-[0_8px_16px_rgba(0,0,0,0.1)] outline-none">
                   {isLoading ? 'Signing in...' : 'Sign in'}
                 </button>
               </form>
 
               <SocialButtons />
 
-              <p className="text-center text-[13px] font-semibold text-[#888888] mt-8">
+              <p className="text-center text-[13px] font-semibold text-[#888888] mt-8 z-10">
                 Don't have an account? <button onClick={() => { setView('signup_email'); setError(''); }} className="text-[#111111] hover:underline outline-none">Sign up</button>
               </p>
             </motion.div>
@@ -293,7 +305,7 @@ export default function AuthPage({ onNavigate }) {
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}
               className="flex flex-col w-full"
             >
-              <PremiumLogo />
+              <HeroIllustration />
               <h1 className="text-[38px] font-serif leading-[1.05] tracking-tight font-bold text-[#111111] text-center mb-3">Sign up Account</h1>
               <p className="text-[13px] text-[#888888] font-sans text-center mb-8 px-4 leading-relaxed">Join now for a faster, smarter reading experience.</p>
 
@@ -312,14 +324,14 @@ export default function AuthPage({ onNavigate }) {
 
                 {error && <p className="text-[#FF3B30] text-[13px] flex items-center gap-1 font-semibold"><AlertCircle size={14}/> {error}</p>}
 
-                <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-4 active:scale-[0.98] transition-transform shadow-pill outline-none">
+                <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-4 active:scale-[0.98] transition-transform shadow-[0_8px_16px_rgba(0,0,0,0.1)] outline-none">
                   {isLoading ? 'Sending Code...' : 'Continue'}
                 </button>
               </form>
 
               <SocialButtons />
 
-              <p className="text-center text-[13px] font-semibold text-[#888888] mt-8">
+              <p className="text-center text-[13px] font-semibold text-[#888888] mt-8 z-10">
                 Already have an account? <button onClick={() => { setView('login'); setError(''); }} className="text-[#111111] hover:underline outline-none">Sign in</button>
               </p>
             </motion.div>
@@ -355,12 +367,12 @@ export default function AuthPage({ onNavigate }) {
 
                 {error && <p className="text-[#FF3B30] text-[13px] flex items-center gap-1 font-semibold"><AlertCircle size={14}/> {error}</p>}
 
-                <button type="submit" disabled={isLoading || otp.join('').length !== 4} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] active:scale-[0.98] transition-transform shadow-pill disabled:opacity-50 outline-none">
+                <button type="submit" disabled={isLoading || otp.join('').length !== 4} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] active:scale-[0.98] transition-transform shadow-[0_8px_16px_rgba(0,0,0,0.1)] disabled:opacity-50 outline-none">
                   {isLoading ? 'Verifying...' : 'Verify Account'}
                 </button>
               </form>
 
-              <p className="text-center text-[13px] font-semibold text-[#888888] mt-8">
+              <p className="text-center text-[13px] font-semibold text-[#888888] mt-8 z-10">
                 Didn't get OTP? <button onClick={handleSignupEmailSubmit} className="text-[#111111] hover:underline outline-none">Resend OTP</button>
               </p>
             </motion.div>
@@ -392,7 +404,7 @@ export default function AuthPage({ onNavigate }) {
 
                 {error && <p className="text-[#FF3B30] text-[13px] flex items-center gap-1 font-semibold"><AlertCircle size={14}/> {error}</p>}
 
-                <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-4 active:scale-[0.98] transition-transform shadow-pill outline-none">
+                <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-4 active:scale-[0.98] transition-transform shadow-[0_8px_16px_rgba(0,0,0,0.1)] outline-none">
                   {isLoading ? 'Creating Account...' : 'Complete Sign up'}
                 </button>
               </form>
@@ -423,7 +435,7 @@ export default function AuthPage({ onNavigate }) {
 
                     {error && <p className="text-[#FF3B30] text-[13px] flex items-center gap-1 font-semibold"><AlertCircle size={14}/> {error}</p>}
 
-                    <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-4 active:scale-[0.98] transition-transform shadow-pill outline-none">
+                    <button type="submit" disabled={isLoading} className="w-full bg-[#111111] text-white py-[18px] rounded-full font-semibold text-[15px] mt-4 active:scale-[0.98] transition-transform shadow-[0_8px_16px_rgba(0,0,0,0.1)] outline-none">
                       {isLoading ? 'Sending Link...' : 'Send Reset Link'}
                     </button>
                   </form>
@@ -431,7 +443,7 @@ export default function AuthPage({ onNavigate }) {
               ) : (
                 <motion.div 
                   initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                  className="flex flex-col items-center text-center mt-4"
+                  className="flex flex-col items-center text-center mt-4 z-10"
                 >
                   <div className="w-16 h-16 bg-[#34A853] rounded-full flex items-center justify-center mb-6 shadow-lg">
                     <CheckCircle2 size={32} className="text-white" />
@@ -440,7 +452,7 @@ export default function AuthPage({ onNavigate }) {
                   <p className="text-[14px] text-[#888888] mb-8 leading-relaxed">
                     We've sent a password reset link to <br/><span className="font-bold text-[#111111]">{email}</span>.
                   </p>
-                  <button onClick={() => { setView('login'); setResetSent(false); }} className="w-full bg-[#F5F5F7] text-[#111111] py-[16px] rounded-full font-semibold text-[15px] active:scale-[0.98] transition-transform outline-none">
+                  <button onClick={() => { setView('login'); setResetSent(false); }} className="w-full bg-[#F5F5F7] text-[#111111] py-[16px] rounded-full font-semibold text-[15px] active:scale-[0.98] transition-transform outline-none shadow-sm">
                     Return to Login
                   </button>
                 </motion.div>
