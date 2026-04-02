@@ -115,8 +115,21 @@ export default function AdminLogin({ onAuthSuccess }) {
   
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']); // 6-digit TOTP for Sign In
   
-  // NATIVE BROWSER TOTP ENGINE INITIALIZATION
-  const secretString = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET234567';
+  // NATIVE BROWSER TOTP ENGINE INITIALIZATION & BASE32 SANITIZATION
+  const rawSecret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET234567';
+
+  // Mathematical Base32 Sanitizer
+  // Base32 strictly allows A-Z and 2-7. We forcefully strip out 0, 1, 8, 9 and any other invalid chars.
+  const sanitizeBase32 = (str) => {
+    let cleaned = str.toUpperCase().replace(/[^A-Z2-7]/g, '2');
+    // Ensure a minimum length of 16 characters for cryptographic stability
+    while (cleaned.length < 16) {
+      cleaned += 'A';
+    }
+    return cleaned;
+  };
+
+  const safeSecretString = sanitizeBase32(rawSecret);
   
   const totp = new OTPAuth.TOTP({
     issuer: 'Pagora',
@@ -124,7 +137,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     algorithm: 'SHA1',
     digits: 6,
     period: 30,
-    secret: OTPAuth.Secret.fromBase32(secretString),
+    secret: OTPAuth.Secret.fromBase32(safeSecretString),
   });
 
   const otpauthUrl = totp.toString();
@@ -544,7 +557,7 @@ export default function AdminLogin({ onAuthSuccess }) {
 
             {/* --- VIEW: PASSWORD RESET --- */}
             {view === 'reset' && (
-              <motion.div key="reset" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col w-full max-w-full box-border relative">
+              <motion.div key="reset" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col w-full max-w-full box-border relative">
                 <button onClick={() => setView('login')} className="absolute top-0 left-0 w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center hover:bg-[#1A1A1A] border border-[#222222] transition-colors outline-none z-10">
                   <BackArrow />
                 </button>
