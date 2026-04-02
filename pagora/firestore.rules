@@ -4,7 +4,7 @@ service cloud.firestore {
     // STRICT BLOCKADE: Only the master administrative emails are allowed to read or write 
     // to this Firebase database. (Public books are safely handled by PocketBase).
     match /{document=**} {
-      allow read, write: if request.auth != null && request.auth.token.email in ["testcodecfg@gmail.com", "auth.mv@outlook.com"];
+      allow read, write: if request.auth != null && request.auth.token.email in ["testcodecfg@gmail.com", "dv3nt@duck.com"];
     }
   }
 }

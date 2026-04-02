@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { authenticator } from '@otplib/preset-browser';
+import * as OTPAuth from 'otpauth';
 import emailjs from '@emailjs/browser';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -114,12 +114,23 @@ export default function AdminLogin({ onAuthSuccess }) {
   const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
   
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']); // 6-digit TOTP for Sign In
-  // FIX: Base32 strictly requires characters A-Z and numbers 2-7. (No 0, 1, 8, 9).
-  const secret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET234567';
-  const otpauthUrl = `otpauth://totp/PagoraAdmin:${email || 'admin'}?secret=${secret}&issuer=Pagora`;
+  
+  // NATIVE BROWSER TOTP ENGINE INITIALIZATION
+  const secretString = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET234567';
+  
+  const totp = new OTPAuth.TOTP({
+    issuer: 'Pagora',
+    label: `PagoraAdmin:${email || 'admin'}`,
+    algorithm: 'SHA1',
+    digits: 6,
+    period: 30,
+    secret: OTPAuth.Secret.fromBase32(secretString),
+  });
+
+  const otpauthUrl = totp.toString();
 
   // --- AUTHORIZED ADMIN LIST ---
-  const ALLOWED_ADMINS = ['testcodecfg@gmail.com', 'auth.mv@outlook.com', 'auth.pagora@outlook.com'];
+  const ALLOWED_ADMINS = ['testcodecfg@gmail.com', 'dv3nt@duck.com', 'auth.pagora@outlook.com'];
 
   // --- SECTION 2: Master Authentication Logic ---
 
@@ -297,8 +308,9 @@ export default function AdminLogin({ onAuthSuccess }) {
     }
 
     try {
-      const isValid = authenticator.check(code, secret);
-      if (isValid) {
+      // Validate returns the token delta if valid, or null if invalid. window 1 allows +/- 30 seconds buffer.
+      const delta = totp.validate({ token: code, window: 1 });
+      if (delta !== null) {
         onAuthSuccess();
       } else {
         setError('Invalid or expired authenticator code.');
@@ -482,7 +494,7 @@ export default function AdminLogin({ onAuthSuccess }) {
                 </div>
 
                 <div className="text-center mt-10 w-full">
-                  <p className="text-[15px] text-[#888888] font-medium">Already have an account? <button onClick={() => setView('login')} className="font-bold text-white outline-none hover:underline ml-1">Sign in</button></p>
+                  <p className="text-[15px] text-[#888888] font-medium">Already have an account? <button onClick={() => setView('login')} className="font-bold text-white outline-none hover:underline ml-1">Sign sign</button></p>
                 </div>
               </motion.div>
             )}
