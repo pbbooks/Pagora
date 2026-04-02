@@ -12,32 +12,49 @@ import {
   signOut
 } from 'firebase/auth';
 
-// --- SECTION 1: Animated CSS Gradient Engine (Strict Custom Palette & Dark Theme) ---
-const AnimatedEditorialBackground = () => (
-  <div className="fixed inset-0 z-0 overflow-hidden bg-[#0C1016]">
-    {/* Cinematic Gradient Loop with Deep Blur & Exact Requested Colors */}
-    <motion.div 
-      className="absolute -top-[30%] -left-[10%] w-[80%] h-[90%] rounded-full blur-[140px] opacity-60"
-      style={{ background: 'radial-gradient(circle, #1E6FEA 0%, #1B3A67 60%, transparent 100%)' }}
-      animate={{ x: [0, 60, 0], y: [0, 40, 0], scale: [1, 1.1, 1] }}
-      transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+// --- SECTION 1: High-End Custom Assets & Illustrations ---
+
+// Centered 3D Animated Orbital Illustration (Strict Palette)
+const HighEndIllustration = () => (
+  <div className="fixed inset-0 w-full h-full flex items-center justify-center pointer-events-none z-0 overflow-hidden">
+    {/* Deep Glowing Cores */}
+    <motion.div
+      className="absolute w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full blur-[100px] opacity-20"
+      style={{ background: 'radial-gradient(circle, #1E6FEA 0%, #1B3A67 50%, transparent 100%)' }}
+      animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 0] }}
+      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
     />
-    <motion.div 
-      className="absolute -bottom-[20%] -right-[10%] w-[90%] h-[90%] rounded-full blur-[150px] opacity-50"
-      style={{ background: 'radial-gradient(circle, #4290F3 0%, #212830 60%, transparent 100%)' }}
-      animate={{ x: [0, -50, 0], y: [0, -30, 0], scale: [1, 1.15, 1] }}
-      transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+    <motion.div
+      className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full blur-[80px] opacity-15"
+      style={{ background: 'radial-gradient(circle, #4290F3 0%, #0C1016 50%, transparent 100%)' }}
+      animate={{ scale: [1.1, 1, 1.1], rotate: [0, -90, 0] }}
+      transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
     />
-    <motion.div 
-      className="absolute top-[20%] left-[30%] w-[60%] h-[60%] rounded-full blur-[120px] opacity-40"
-      style={{ background: 'radial-gradient(circle, #D5D6D0 0%, #0D1116 60%, transparent 100%)' }}
-      animate={{ x: [0, 30, 0], y: [0, -40, 0], scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
-      transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-    />
+    
+    {/* Abstract 3D Orbital Rings */}
+    <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px] flex items-center justify-center opacity-30">
+      <motion.div
+        className="absolute w-[80%] h-[30%] rounded-[50%] border border-[#4290F3]/40"
+        animate={{ rotateZ: 360, rotateX: [60, 75, 60] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        style={{ transformStyle: 'preserve-3d' }}
+      />
+      <motion.div
+        className="absolute w-[90%] h-[25%] rounded-[50%] border border-[#1E6FEA]/50"
+        animate={{ rotateZ: -360, rotateY: [60, 80, 60] }}
+        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        style={{ transformStyle: 'preserve-3d' }}
+      />
+      <motion.div
+        className="absolute w-[100%] h-[20%] rounded-[50%] border border-[#D5D6D0]/20"
+        animate={{ rotateZ: 360, rotateX: [-50, -70, -50] }}
+        transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+      />
+    </div>
   </div>
 );
 
-// High-End Precision SVG Icons for Buttons & Inputs (White for Dark Mode)
+// High-End Precision SVG Icons for Buttons & Inputs
 const GoogleIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M22.56 12.25C22.56 11.47 22.49 10.73 22.36 10H12V14.26H17.92C17.66 15.63 16.88 16.8 15.7 17.59V20.34H19.26C21.35 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4"/>
@@ -55,7 +72,7 @@ const AppleIcon = () => (
 );
 
 const EyeIcon = ({ closed }) => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     {closed ? (
       <>
         <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
@@ -75,19 +92,6 @@ const BackArrow = () => (
     <line x1="19" y1="12" x2="5" y2="12" />
     <polyline points="12 19 5 12 12 5" />
   </svg>
-);
-
-const PagoraLogo = () => (
-  <div className="flex flex-col items-center">
-    <div className="flex items-end gap-1 mb-4">
-      <div className="w-10 h-5 bg-white rounded-sm"></div>
-      <div className="w-16 h-8 bg-white rounded-sm relative bottom-2"></div>
-      <div className="w-5 h-16 bg-white rounded-sm"></div>
-    </div>
-    <h1 className="text-[54px] font-serif font-black tracking-tighter text-white leading-none mb-1">Pagora</h1>
-    <br></br>
-    <p className="text-[12px] font-sans font-bold tracking-[0.2em] text-white/70 uppercase">By PB Books</p>
-  </div>
 );
 
 export default function AdminLogin({ onAuthSuccess }) {
@@ -164,7 +168,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       if (result.user.email !== 'testcodecfg@gmail.com') {
-        await signOut(auth); // Instantly destroy the unauthorized session
+        await signOut(auth);
         setError('Unauthorized Identity. Corporate SSO strictly limited to master admin.');
         setIsLoading(false);
         return;
@@ -182,7 +186,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     try {
       const result = await signInWithPopup(auth, appleProvider);
       if (result.user.email !== 'testcodecfg@gmail.com') {
-        await signOut(auth); // Instantly destroy the unauthorized session
+        await signOut(auth);
         setError('Unauthorized Identity. Corporate SSO strictly limited to master admin.');
         setIsLoading(false);
         return;
@@ -240,90 +244,96 @@ export default function AdminLogin({ onAuthSuccess }) {
 
   const renderSocialButtons = () => (
     <>
-      <div className="flex items-center justify-between my-6 w-full">
-        <div className="h-[1px] bg-white/20 flex-1"></div>
-        <span className="text-[11px] font-bold text-white/50 px-4 uppercase tracking-widest whitespace-nowrap">OR</span>
-        <div className="h-[1px] bg-white/20 flex-1"></div>
+      <div className="flex items-center justify-between my-8 w-full">
+        <div className="h-[1px] bg-white/10 flex-1"></div>
+        <span className="text-[10px] font-bold text-white/40 px-4 uppercase tracking-[0.2em] whitespace-nowrap">OR</span>
+        <div className="h-[1px] bg-white/10 flex-1"></div>
       </div>
-      <div className="space-y-3 w-full">
-        <button type="button" onClick={handleGoogleSSO} disabled={isLoading} className="w-full bg-[#1e1e1e] hover:bg-[#252525] border border-white/10 text-white py-4 rounded-full font-bold text-[14px] flex items-center justify-center gap-3 transition-colors outline-none disabled:opacity-50 shadow-sm">
+      <div className="space-y-4 w-full">
+        <button type="button" onClick={handleGoogleSSO} disabled={isLoading} className="w-full bg-[#111111] hover:bg-[#1A1A1A] border border-[#222222] text-white py-4 sm:py-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-3 transition-colors outline-none disabled:opacity-50 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
           <GoogleIcon /> Continue with Google
         </button>
-        <button type="button" onClick={handleAppleSSO} disabled={isLoading} className="w-full bg-[#1e1e1e] hover:bg-[#252525] border border-white/10 text-white py-4 rounded-full font-bold text-[14px] flex items-center justify-center gap-3 transition-colors outline-none disabled:opacity-50 shadow-sm">
+        <button type="button" onClick={handleAppleSSO} disabled={isLoading} className="w-full bg-[#111111] hover:bg-[#1A1A1A] border border-[#222222] text-white py-4 sm:py-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-3 transition-colors outline-none disabled:opacity-50 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
           <AppleIcon /> Continue with Apple
         </button>
       </div>
     </>
   );
 
+  // Reusable Bottom Logo Component (Video + Typography)
+  const BottomLogo = () => (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="mt-16 pt-8 border-t border-[#151515] flex items-center justify-center gap-5 w-full"
+    >
+      <div className="relative w-[52px] h-[52px] flex items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(30,111,234,0.2)] border border-white/5 bg-black/40">
+        {/* CSS Magic to make solid background transparent and isolate white animation */}
+        <video 
+          src="/logo.mp4" 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="absolute w-[120px] h-[120px] max-w-none object-cover scale-[1.8]"
+          style={{ mixBlendMode: 'screen', filter: 'grayscale(100%) contrast(300%) brightness(1.2)' }}
+        />
+      </div>
+      <div className="flex flex-col items-start">
+        <h2 className="text-[32px] font-serif font-black tracking-tighter leading-none text-white">Pagora.</h2>
+        <p className="text-[10px] font-sans font-bold tracking-[0.25em] text-[#1E6FEA] uppercase mt-1">By PB Books</p>
+      </div>
+    </motion.div>
+  );
+
   return (
-    /* PERMANENT CUTOFF FIX: min-h-screen with flex-col allows internal centering via my-auto, but scrolls natively if content is too tall */
-    <div className="min-h-screen w-full flex flex-col p-4 sm:p-8 relative overflow-x-hidden bg-[#0C1016]">
-      <AnimatedEditorialBackground />
+    /* PERMANENT CUTOFF FIX: Centered Flex Column. Natively scrolls if height exceeds viewport. */
+    <div className="min-h-screen w-full flex flex-col items-center bg-[#050505] text-white relative overflow-x-hidden font-sans">
+      <HighEndIllustration />
 
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        /* STRICT DARK MODE: bg-[#2d2d2d] with light transparency for the blur */
-        className="w-full max-w-6xl mx-auto my-auto bg-[#2d2d2d]/90 backdrop-blur-2xl rounded-[40px] shadow-[0_32px_80px_rgba(0,0,0,0.8)] border border-white/10 relative z-10 flex flex-col lg:flex-row overflow-hidden"
-      >
-        {/* --- DESKTOP WIDE LEFT PANE --- */}
-        <div className="hidden lg:flex flex-col w-5/12 bg-black/20 border-r border-white/5 p-12 relative overflow-hidden min-w-[400px]">
-          <div className="flex-1 flex flex-col items-center justify-center relative z-10 py-12">
-            <PagoraLogo />
-          </div>
-          <div className="relative z-10 text-center">
-            <p className="text-[11px] font-sans font-bold tracking-[0.2em] text-white/50 uppercase">Secure Enterprise Portal</p>
-          </div>
-        </div>
-
-        {/* --- INTERACTIVE RIGHT PANE --- */}
-        <div className="w-full lg:w-7/12 p-6 sm:p-12 md:p-16 flex flex-col justify-center relative bg-transparent min-w-0">
+      <div className="flex-1 flex flex-col justify-center w-full px-6 py-12 relative z-20">
+        <div className="w-full max-w-md mx-auto flex flex-col my-auto">
           <AnimatePresence mode="wait">
             
             {/* --- VIEW: SIGN IN --- */}
             {view === 'login' && (
-              <motion.div key="login" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex flex-col h-full flex-1 w-full max-w-full box-border">
-                <div className="text-center mb-8 lg:text-left">
-                  {/* Matching Bookbee Image Font (font-serif) */}
-                  <h1 className="font-serif text-[32px] md:text-[36px] font-bold tracking-tight text-white mb-2">Welcome back</h1>
-                  <p className="text-[14px] text-white/70 leading-relaxed">Access the Pagora editorial dashboard and manage your ecosystem.</p>
+              <motion.div key="login" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col w-full box-border">
+                <div className="text-center mb-10">
+                  <h1 className="font-serif text-[48px] sm:text-[56px] font-black tracking-tighter text-white leading-[1.05] mb-4">Welcome<br/>Back.</h1>
+                  <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">Access your editorial ecosystem and manage database architecture.</p>
                 </div>
 
-                <form onSubmit={handleSignIn} className="space-y-5 flex-1 w-full">
-                  <div>
-                    <label className="text-[13px] font-bold text-white mb-2 block ml-1">Email</label>
-                    <input type="email" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)}
-                      className="w-full bg-[#1e1e1e] px-6 py-4 rounded-full outline-none text-[14px] text-white placeholder-white/40 border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] transition-all box-border shadow-inner" />
+                <form onSubmit={handleSignIn} className="space-y-4 sm:space-y-5 w-full">
+                  <div className="relative w-full">
+                    <input type="email" placeholder="Enter your email address" required value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full bg-[#111111] px-6 py-5 sm:py-6 rounded-full outline-none text-[15px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border" />
                   </div>
-                  <div>
-                    <label className="text-[13px] font-bold text-white mb-2 block ml-1">Password</label>
-                    <div className="relative w-full">
-                      <input type={showPassword ? "text" : "password"} placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)}
-                        className="w-full bg-[#1e1e1e] px-6 py-4 rounded-full outline-none text-[14px] text-white placeholder-white/40 border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] transition-all box-border shadow-inner" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 outline-none">
-                        <EyeIcon closed={!showPassword} />
-                      </button>
-                    </div>
+                  <div className="relative w-full">
+                    <input type={showPassword ? "text" : "password"} placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)}
+                      className="w-full bg-[#111111] px-6 py-5 sm:py-6 rounded-full outline-none text-[15px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-6 top-1/2 -translate-y-1/2 outline-none opacity-50 hover:opacity-100 transition-opacity">
+                      <EyeIcon closed={!showPassword} />
+                    </button>
                   </div>
 
-                  <div className="flex justify-between items-center px-2 pt-1 pb-2">
-                    <label className="flex items-center gap-2 text-[13px] font-bold text-white cursor-pointer">
-                      <input type="checkbox" className="w-4 h-4 rounded text-[#4290F3] focus:ring-[#4290F3] border-white/20 accent-[#4290F3] cursor-pointer bg-[#1e1e1e]" defaultChecked />
+                  <div className="flex justify-between items-center px-3 pt-2 pb-2">
+                    <label className="flex items-center gap-3 text-[13px] font-bold text-[#888888] cursor-pointer">
+                      <input type="checkbox" className="w-5 h-5 rounded text-[#1E6FEA] focus:ring-[#1E6FEA] border-[#333333] accent-[#1E6FEA] cursor-pointer bg-[#111111]" defaultChecked />
                       Remember me
                     </label>
-                    <button type="button" onClick={() => setView('reset')} className="text-[13px] font-bold text-[#FF3B30] hover:text-[#FF6B60] transition-colors outline-none">
+                    <button type="button" onClick={() => setView('reset')} className="text-[13px] font-bold text-white/50 hover:text-white transition-colors outline-none">
                       Forgot password?
                     </button>
                   </div>
 
                   {(error || message) && (
-                    <div className={`text-[13px] font-bold text-center px-4 ${error ? 'text-[#FF3B30]' : 'text-[#4290F3]'}`}>
+                    <div className={`text-[13px] font-bold text-center px-2 ${error ? 'text-[#FF3B30]' : 'text-[#1E6FEA]'}`}>
                       {error || message}
                     </div>
                   )}
 
-                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#4290F3] text-white py-4 rounded-full font-bold text-[15px] transition-colors outline-none mt-2 shadow-[0_8px_24px_rgba(30,111,234,0.4)] active:scale-[0.98] box-border border border-transparent">
+                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#1A5BCE] text-white py-5 sm:py-6 rounded-full font-bold text-[16px] transition-colors outline-none mt-4 active:scale-[0.98] box-border shadow-[0_8px_24px_rgba(30,111,234,0.3)]">
                     {isLoading ? 'Authenticating...' : 'Sign in'}
                   </button>
                 </form>
@@ -332,57 +342,45 @@ export default function AdminLogin({ onAuthSuccess }) {
                   {renderSocialButtons()}
                 </div>
 
-                <div className="text-center mt-8 w-full">
-                  <p className="text-[13px] text-white/70">Don't have an account? <button onClick={() => setView('signup')} className="font-bold text-white outline-none hover:underline">Sign up</button></p>
+                <div className="text-center mt-10 w-full">
+                  <p className="text-[15px] text-[#888888] font-medium">Don't have an account? <button onClick={() => setView('signup')} className="font-bold text-white outline-none hover:underline ml-1">Sign up</button></p>
                 </div>
               </motion.div>
             )}
 
             {/* --- VIEW: SIGN UP --- */}
             {view === 'signup' && (
-              <motion.div key="signup" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col h-full flex-1 w-full max-w-full box-border">
-                <div className="text-center mb-8 lg:text-left">
-                  <h1 className="font-serif text-[32px] md:text-[36px] font-bold tracking-tight text-white mb-2">Sign up Account</h1>
-                  <p className="text-[14px] text-white/70 leading-relaxed">Initialize the master architecture for a smarter publishing experience.</p>
+              <motion.div key="signup" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col w-full max-w-full box-border">
+                <div className="text-center mb-10">
+                  <h1 className="font-serif text-[48px] sm:text-[56px] font-black tracking-tighter text-white leading-[1.05] mb-4">Sign Up.</h1>
+                  <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">Initialize the master architecture for a smarter publishing experience.</p>
                 </div>
 
-                <form onSubmit={handleSignUp} className="space-y-4 flex-1 w-full">
-                  <div>
-                    <label className="text-[13px] font-bold text-white mb-2 block ml-1">Name</label>
+                <form onSubmit={handleSignUp} className="space-y-4 sm:space-y-5 w-full">
+                  <div className="relative w-full">
                     <input type="text" placeholder="Enter your name" required value={name} onChange={e => setName(e.target.value)}
-                      className="w-full bg-[#1e1e1e] px-6 py-4 rounded-full outline-none text-[14px] text-white placeholder-white/40 border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] transition-all box-border shadow-inner" />
+                      className="w-full bg-[#111111] px-6 py-5 sm:py-6 rounded-full outline-none text-[15px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border" />
                   </div>
-                  <div>
-                    <label className="text-[13px] font-bold text-white mb-2 block ml-1">Email</label>
-                    <input type="email" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)}
-                      className="w-full bg-[#1e1e1e] px-6 py-4 rounded-full outline-none text-[14px] text-white placeholder-white/40 border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] transition-all box-border shadow-inner" />
+                  <div className="relative w-full">
+                    <input type="email" placeholder="Enter your email address" required value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full bg-[#111111] px-6 py-5 sm:py-6 rounded-full outline-none text-[15px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border" />
                   </div>
-                  <div>
-                    <label className="text-[13px] font-bold text-white mb-2 block ml-1">Password</label>
-                    <div className="relative w-full">
-                      <input type={showPassword ? "text" : "password"} placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)}
-                        className="w-full bg-[#1e1e1e] px-6 py-4 rounded-full outline-none text-[14px] text-white placeholder-white/40 border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] transition-all box-border shadow-inner" />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 outline-none">
-                        <EyeIcon closed={!showPassword} />
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center px-2 pt-1 pb-1">
-                    <label className="flex items-center gap-2 text-[13px] font-bold text-white cursor-pointer">
-                      <input type="checkbox" className="w-4 h-4 rounded text-[#4290F3] focus:ring-[#4290F3] border-white/20 accent-[#4290F3] cursor-pointer bg-[#1e1e1e]" defaultChecked />
-                      Remember me
-                    </label>
+                  <div className="relative w-full">
+                    <input type={showPassword ? "text" : "password"} placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)}
+                      className="w-full bg-[#111111] px-6 py-5 sm:py-6 rounded-full outline-none text-[15px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border" />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-6 top-1/2 -translate-y-1/2 outline-none opacity-50 hover:opacity-100 transition-opacity">
+                      <EyeIcon closed={!showPassword} />
+                    </button>
                   </div>
 
                   {(error || message) && (
-                    <div className={`text-[13px] font-bold text-center px-4 ${error ? 'text-[#FF3B30]' : 'text-[#4290F3]'}`}>
+                    <div className={`text-[13px] font-bold text-center px-2 ${error ? 'text-[#FF3B30]' : 'text-[#1E6FEA]'}`}>
                       {error || message}
                     </div>
                   )}
 
-                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#4290F3] text-white py-4 rounded-full font-bold text-[15px] transition-colors outline-none mt-2 shadow-[0_8px_24px_rgba(30,111,234,0.4)] active:scale-[0.98] box-border border border-transparent">
-                    {isLoading ? 'Processing...' : 'Sign up'}
+                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#1A5BCE] text-white py-5 sm:py-6 rounded-full font-bold text-[16px] transition-colors outline-none mt-6 active:scale-[0.98] box-border shadow-[0_8px_24px_rgba(30,111,234,0.3)]">
+                    {isLoading ? 'Processing...' : 'Create Account'}
                   </button>
                 </form>
 
@@ -390,37 +388,37 @@ export default function AdminLogin({ onAuthSuccess }) {
                   {renderSocialButtons()}
                 </div>
 
-                <div className="text-center mt-6 w-full">
-                  <p className="text-[13px] text-white/70">Already have an account? <button onClick={() => setView('login')} className="font-bold text-white outline-none hover:underline">Sign in</button></p>
+                <div className="text-center mt-10 w-full">
+                  <p className="text-[15px] text-[#888888] font-medium">Already have an account? <button onClick={() => setView('login')} className="font-bold text-white outline-none hover:underline ml-1">Sign in</button></p>
                 </div>
               </motion.div>
             )}
 
             {/* --- VIEW: PASSWORD RESET --- */}
             {view === 'reset' && (
-              <motion.div key="reset" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="flex flex-col h-full flex-1 justify-center relative pt-12 w-full max-w-full box-border">
-                <button onClick={() => setView('login')} className="absolute top-0 left-0 w-10 h-10 bg-[#1e1e1e] rounded-full flex items-center justify-center hover:bg-[#252525] border border-white/10 transition-colors outline-none shadow-sm">
+              <motion.div key="reset" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col w-full max-w-full box-border relative">
+                <button onClick={() => setView('login')} className="absolute top-0 left-0 w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center hover:bg-[#1A1A1A] border border-[#222222] transition-colors outline-none z-10">
                   <BackArrow />
                 </button>
                 
-                <div className="text-center mb-10">
-                  <h1 className="font-serif text-[32px] md:text-[36px] font-bold tracking-tight text-white mb-4">Reset Password</h1>
-                  <p className="text-[14px] text-white/70 leading-relaxed">Enter your master administrative email to receive a secure recovery payload.</p>
+                <div className="text-center mb-12 pt-16 sm:pt-20">
+                  <h1 className="font-serif text-[48px] sm:text-[56px] font-black tracking-tighter text-white leading-[1.05] mb-4">Reset<br/>Access.</h1>
+                  <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">Enter your master administrative email to receive a secure recovery payload.</p>
                 </div>
 
                 <form onSubmit={handlePasswordReset} className="space-y-6 w-full">
-                  <div>
-                    <input type="email" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)}
-                      className="w-full bg-[#1e1e1e] px-6 py-5 rounded-full outline-none text-[15px] text-white placeholder-white/40 border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] text-center transition-colors box-border shadow-inner" />
+                  <div className="relative w-full">
+                    <input type="email" placeholder="Enter your email address" required value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full bg-[#111111] px-6 py-6 rounded-full outline-none text-[16px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] text-center transition-colors box-border" />
                   </div>
 
                   {(error || message) && (
-                    <div className={`text-[13px] font-bold text-center px-4 ${error ? 'text-[#FF3B30]' : 'text-[#4290F3]'}`}>
+                    <div className={`text-[13px] font-bold text-center px-2 ${error ? 'text-[#FF3B30]' : 'text-[#1E6FEA]'}`}>
                       {error || message}
                     </div>
                   )}
 
-                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#4290F3] text-white py-4 rounded-full font-bold text-[15px] transition-colors outline-none shadow-[0_8px_24px_rgba(30,111,234,0.4)] active:scale-[0.98] box-border border border-transparent">
+                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#1A5BCE] text-white py-6 rounded-full font-bold text-[16px] transition-colors outline-none active:scale-[0.98] box-border shadow-[0_8px_24px_rgba(30,111,234,0.3)]">
                     {isLoading ? 'Dispatching...' : 'Send Recovery Link'}
                   </button>
                 </form>
@@ -429,20 +427,20 @@ export default function AdminLogin({ onAuthSuccess }) {
 
             {/* --- VIEW: SPLIT OTP --- */}
             {view === 'otp' && (
-              <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col h-full flex-1 relative pt-12 w-full max-w-full box-border">
-                <button onClick={() => { setView('login'); setOtpValues(['','','','','','']); }} className="absolute top-0 left-0 w-10 h-10 bg-[#1e1e1e] rounded-full flex items-center justify-center hover:bg-[#252525] border border-white/10 transition-colors outline-none shadow-sm">
+              <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col w-full max-w-full box-border relative">
+                <button onClick={() => { setView('login'); setOtpValues(['','','','','','']); }} className="absolute top-0 left-0 w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center hover:bg-[#1A1A1A] border border-[#222222] transition-colors outline-none z-10">
                   <BackArrow />
                 </button>
 
-                <div className="text-center mb-10 md:text-left md:mt-4">
-                  <h1 className="font-serif text-[32px] md:text-[36px] font-bold tracking-tight text-white mb-4">Enter OTP Code</h1>
-                  <p className="text-[14px] text-white/70 leading-relaxed">
-                    Check your Authenticator App. We require a time-based verification code. Enter the 6-digit code below to verify your session.
+                <div className="text-center mb-12 pt-16 sm:pt-20">
+                  <h1 className="font-serif text-[48px] sm:text-[56px] font-black tracking-tighter text-white leading-[1.05] mb-4">Enter<br/>Code.</h1>
+                  <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">
+                    Check your Authenticator App. Enter the 6-digit verification code below to authorize your session.
                   </p>
                 </div>
 
                 <form onSubmit={verifyTOTP} className="flex flex-col flex-1 w-full">
-                  <div className="flex justify-between gap-2 sm:gap-3 w-full mb-10 max-w-md mx-auto">
+                  <div className="flex justify-between gap-2 sm:gap-4 w-full mb-12">
                     {otpValues.map((val, index) => (
                       <input
                         key={index}
@@ -452,31 +450,34 @@ export default function AdminLogin({ onAuthSuccess }) {
                         value={val}
                         onChange={(e) => handleOtpChange(index, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                        className="w-[15%] aspect-square max-w-[60px] bg-[#1e1e1e] rounded-full text-center text-[24px] font-bold text-white outline-none border border-white/10 focus:border-[#4290F3] focus:bg-[#252525] transition-all shadow-inner box-border"
+                        className="w-[15%] aspect-square max-w-[64px] bg-[#111111] rounded-full text-center text-[28px] font-bold text-white outline-none border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border"
                       />
                     ))}
                   </div>
                   
                   {error && (
-                    <div className="text-[#FF3B30] text-[13px] font-bold text-center mb-6">
+                    <div className="text-[#FF3B30] text-[13px] font-bold text-center mb-6 px-2">
                       {error}
                     </div>
                   )}
 
-                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#4290F3] text-white py-4 rounded-full font-bold text-[15px] transition-colors outline-none shadow-[0_8px_24px_rgba(30,111,234,0.4)] active:scale-[0.98] box-border border border-transparent">
-                    {isLoading ? 'Verifying...' : 'Continue'}
+                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#1A5BCE] text-white py-6 rounded-full font-bold text-[16px] transition-colors outline-none active:scale-[0.98] box-border shadow-[0_8px_24px_rgba(30,111,234,0.3)]">
+                    {isLoading ? 'Verifying...' : 'Authorize Access'}
                   </button>
 
-                  <div className="text-center mt-8 w-full">
-                    <p className="text-[13px] text-white/70">Didn't get OTP? <button type="button" onClick={() => setOtpValues(['','','','','',''])} className="font-bold text-white hover:underline outline-none">Resend OTP</button></p>
+                  <div className="text-center mt-10 w-full">
+                    <p className="text-[15px] text-[#888888] font-medium">Didn't get OTP? <button type="button" onClick={() => setOtpValues(['','','','','',''])} className="font-bold text-white hover:underline ml-1 outline-none">Resend Code</button></p>
                   </div>
                 </form>
               </motion.div>
             )}
 
           </AnimatePresence>
+
+          {/* Master Centered Logo with Animated Video */}
+          <BottomLogo />
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
