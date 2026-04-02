@@ -1,7 +1,4 @@
-import { Buffer } from 'buffer';
-window.Buffer = Buffer;
-globalThis.Buffer = Buffer;
-
+import './polyfills.js'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
