@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import * as otplib from 'otplib';
+import { authenticator } from '@otplib/preset-browser';
 import emailjs from '@emailjs/browser';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -282,7 +282,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     }
 
     try {
-      const isValid = otplib.authenticator.check(code, secret);
+      const isValid = authenticator.check(code, secret);
       if (isValid) {
         onAuthSuccess();
       } else {
@@ -338,6 +338,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     </>
   );
 
+  // Reusable Bottom Logo Component (Video + Typography)
   const BottomLogo = () => (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -346,6 +347,7 @@ export default function AdminLogin({ onAuthSuccess }) {
       className="mt-16 pt-8 border-t border-[#151515] flex items-center justify-center gap-5 w-full"
     >
       <div className="relative w-[52px] h-[52px] flex items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(30,111,234,0.2)] border border-white/5 bg-black/40">
+        {/* CSS Magic to make solid background transparent and isolate white animation */}
         <video 
           src="/logo.mp4" 
           autoPlay 
@@ -364,6 +366,7 @@ export default function AdminLogin({ onAuthSuccess }) {
   );
 
   return (
+    /* PERMANENT CUTOFF FIX: Centered Flex Column. Natively scrolls if height exceeds viewport. */
     <div className="min-h-screen w-full flex flex-col items-center bg-[#050505] text-white relative overflow-x-hidden font-sans">
       <HighEndIllustration />
 
