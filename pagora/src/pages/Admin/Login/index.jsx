@@ -114,7 +114,8 @@ export default function AdminLogin({ onAuthSuccess }) {
   const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
   
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']); // 6-digit TOTP for Sign In
-  const secret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET12345';
+  // FIX: Base32 strictly requires characters A-Z and numbers 2-7. (No 0, 1, 8, 9).
+  const secret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET234567';
   const otpauthUrl = `otpauth://totp/PagoraAdmin:${email || 'admin'}?secret=${secret}&issuer=Pagora`;
 
   // --- AUTHORIZED ADMIN LIST ---
@@ -203,7 +204,18 @@ export default function AdminLogin({ onAuthSuccess }) {
         setEmailOtpValues(['', '', '', '']);
       }, 2000);
     } catch (err) {
-      setError('Registration failed. Account may already exist.');
+      console.error("Firebase Auth Error:", err);
+      if (err.code === 'auth/email-already-in-use') {
+        setMessage('Account already exists. Redirecting to login...');
+        setTimeout(() => {
+          setView('login');
+          setEmailOtpValues(['', '', '', '']);
+        }, 2000);
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password is too weak. Please use at least 12 characters.');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
