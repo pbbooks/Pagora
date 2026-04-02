@@ -117,6 +117,9 @@ export default function AdminLogin({ onAuthSuccess }) {
   const secret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET12345';
   const otpauthUrl = `otpauth://totp/PagoraAdmin:${email || 'admin'}?secret=${secret}&issuer=Pagora`;
 
+  // --- AUTHORIZED ADMIN LIST ---
+  const ALLOWED_ADMINS = ['testcodecfg@gmail.com', 'auth.mv@outlook.com', 'auth.pagora@outlook.com'];
+
   // --- SECTION 2: Master Authentication Logic ---
 
   const handleSignIn = async (e) => {
@@ -138,8 +141,8 @@ export default function AdminLogin({ onAuthSuccess }) {
     setIsLoading(true); setError(''); setMessage('');
     
     // Strict Database Protection
-    if (email !== 'testcodecfg@gmail.com') {
-      setError('System identity violation. Only the master admin can initialize this portal.');
+    if (!ALLOWED_ADMINS.includes(email.toLowerCase())) {
+      setError('System identity violation. Only authorized master admins can initialize this portal.');
       setIsLoading(false);
       return;
     }
@@ -225,9 +228,9 @@ export default function AdminLogin({ onAuthSuccess }) {
     setIsLoading(true); setError(''); setMessage('');
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      if (result.user.email !== 'testcodecfg@gmail.com') {
+      if (!ALLOWED_ADMINS.includes(result.user.email.toLowerCase())) {
         await signOut(auth);
-        setError('Unauthorized Identity. Corporate SSO strictly limited to master admin.');
+        setError('Unauthorized Identity. Corporate SSO strictly limited to master admins.');
         setIsLoading(false);
         return;
       }
@@ -248,9 +251,9 @@ export default function AdminLogin({ onAuthSuccess }) {
     setIsLoading(true); setError(''); setMessage('');
     try {
       const result = await signInWithPopup(auth, appleProvider);
-      if (result.user.email !== 'testcodecfg@gmail.com') {
+      if (!ALLOWED_ADMINS.includes(result.user.email.toLowerCase())) {
         await signOut(auth);
-        setError('Unauthorized Identity. Corporate SSO strictly limited to master admin.');
+        setError('Unauthorized Identity. Corporate SSO strictly limited to master admins.');
         setIsLoading(false);
         return;
       }
@@ -346,7 +349,7 @@ export default function AdminLogin({ onAuthSuccess }) {
       transition={{ delay: 0.2 }}
       className="mt-16 pt-8 border-t border-[#151515] flex items-center justify-center gap-5 w-full"
     >
-      <div className="relative w-[52px] h-[52px] flex items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(30,111,234,0.2)] border border-white/5 bg-black/40">
+      <div className="relative w-[52px] h-[52px] flex items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(30,111,234,0.15)] border border-white/5 bg-[#050505]">
         {/* CSS Magic to make solid background transparent and isolate white animation */}
         <video 
           src="/logo.mp4" 
@@ -354,8 +357,8 @@ export default function AdminLogin({ onAuthSuccess }) {
           loop 
           muted 
           playsInline 
-          className="absolute w-[120px] h-[120px] max-w-none object-cover scale-[1.8]"
-          style={{ mixBlendMode: 'screen', filter: 'grayscale(100%) contrast(300%) brightness(1.2)' }}
+          className="absolute w-[140px] h-[140px] max-w-none object-cover scale-[2.0]"
+          style={{ mixBlendMode: 'screen', filter: 'grayscale(100%) contrast(300%) brightness(1.5)' }}
         />
       </div>
       <div className="flex flex-col items-start">
