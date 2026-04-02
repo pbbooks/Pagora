@@ -1,5 +1,15 @@
 {
   "projects": {
-    "default": "pbpagora"
+    "default": "pbpagora",
+    "production": "pbpagora"
+  },
+  "targets": {
+    "pbpagora": {
+      "hosting": {
+        "pbpagoraweb": [
+          "pbpagoraweb"
+        ]
+      }
+    }
   }
 }
