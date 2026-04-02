@@ -1,194 +1,230 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, ArrowRight, Smartphone, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import * as otplib from 'otplib';
 
 // Corrected relative paths for backend consistency
-import { auth, db } from '../../../firebase';
-import { pb } from '../../../pocketbase';
+import { auth } from '../../../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-// High-End SVG Background Illustration (Floating Manuscript & Quill)
+// --- SECTION 1: Cinematic Page Background Illustration (No SVG Icons) ---
 const LoginBackground = () => (
-  <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#FFFFFF]">
-    {/* Soft Editorial Gradients */}
-    <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[50%] bg-gradient-to-bl from-[#F8FAFC] to-transparent rounded-full blur-[100px] opacity-60"></div>
-    <div className="absolute bottom-[-10%] left-[-10%] w-[70%] h-[60%] bg-gradient-to-tr from-[#F1F5F9] to-transparent rounded-full blur-[120px] opacity-70"></div>
-    
-    <svg className="absolute w-full h-full opacity-[0.05]" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Flowing Manuscript Lines */}
-      <motion.path 
-        d="M100 200 Q 400 150 700 200 M100 300 Q 400 250 700 300 M100 400 Q 400 350 700 400" 
-        stroke="#111111" strokeWidth="1" strokeDasharray="4 4"
-        initial={{ pathLength: 0, opacity: 0 }} 
-        animate={{ pathLength: 1, opacity: 1 }} 
-        transition={{ duration: 4, repeat: Infinity, repeatType: "reverse" }}
-      />
-      
-      {/* High-End Fountain Pen / Quill Illustration */}
-      <motion.g 
-        initial={{ rotate: -10, x: 50, y: 50 }}
-        animate={{ x: [0, -10, 0], y: [0, 10, 0], rotate: [-10, -5, -10] }}
-        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-      >
-        <path d="M550 150 L480 400 L510 415 L580 165 Z" fill="#111111" />
-        <path d="M480 400 L465 440 L510 415 Z" fill="#1E6FEA" />
-        <path d="M550 150 C 600 80 650 100 650 100 C 650 100 620 150 580 165" stroke="#111111" strokeWidth="2" fill="none" />
-      </motion.g>
+  <div className="fixed inset-0 z-0 overflow-hidden bg-[#0a0a0a]">
+    {/* High-end cinematic library background replacing SVG icons */}
+    <motion.div 
+      className="absolute inset-0 bg-cover bg-center grayscale-[0.85] opacity-40 mix-blend-luminosity"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')" }}
+      animate={{ scale: [1, 1.05, 1] }}
+      transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-transparent to-[#000000] opacity-80"></div>
+  </div>
+);
 
-      {/* Abstract ink blot animation */}
-      <motion.circle 
-        cx="465" cy="445" r="4" fill="#1E6FEA" 
-        animate={{ scale: [1, 2, 1], opacity: [0.3, 0.6, 0.3] }} 
-        transition={{ repeat: Infinity, duration: 3 }}
-      />
-    </svg>
+// --- SECTION 2: CSS-Based Pagora Geometric Logo (Matching the "EXC" image style) ---
+const PagoraLogo = () => (
+  <div className="flex flex-col items-center">
+    {/* Pure CSS Geometric Books/Blocks instead of SVG */}
+    <div className="flex items-end gap-1 mb-3">
+      <div className="w-8 h-4 bg-[#111111] rounded-sm"></div>
+      <div className="w-12 h-6 bg-[#111111] rounded-sm relative bottom-2"></div>
+      <div className="w-4 h-12 bg-[#111111] rounded-sm"></div>
+    </div>
+    <h1 className="text-[42px] font-sans font-black tracking-tighter text-[#111111] leading-none mb-1">Pagora</h1>
+    <p className="text-[10px] font-sans font-bold tracking-[0.2em] text-[#666666] uppercase">Publishing Engine</p>
   </div>
 );
 
 export default function AdminLogin({ onAuthSuccess }) {
-  const [step, setStep] = useState(1); // 1: Credentials, 2: TOTP
+  const [step, setStep] = useState(1); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [totpCode, setTotpCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Time-Based Security Configuration
+  // Time-Based Security Configuration (Real logic using otplib)
   const secret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET12345';
-  const otpauth = `otpauth://totp/PagoraAdmin:admin@pagora.ai?secret=${secret}&issuer=Pagora`;
+  const otpauth = `otpauth://totp/PagoraAdmin:testcodecfg@gmail.com?secret=${secret}&issuer=Pagora`;
 
-  const handleInitialAuth = (e) => {
+  // --- SECTION 3 LOGIC: Strict Firebase Identity Check ---
+  const handleInitialAuth = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
     
-    // Strict System ID check
-    setTimeout(() => {
-      if (email === 'admin@pagora.ai' && password === 'Pagora@2026') {
-        setStep(2);
-      } else {
-        setError('Unauthorized System Identity or Security Key.');
-      }
+    // Strict Hardcoded System Identity Block
+    if (email !== 'testcodecfg@gmail.com') {
+      setError('Unauthorized Identity. Access restricted.');
       setIsLoading(false);
-    }, 1000);
+      return;
+    }
+
+    try {
+      // Real Firebase Authentication Verification
+      await signInWithEmailAndPassword(auth, email, password);
+      setStep(2); // Move to 2FA state
+    } catch (err) {
+      setError('Invalid Security Key.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  // --- SECTION 4 LOGIC: Time-Based One Time Password (TOTP) Verification ---
   const verifyTOTP = (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     try {
+      // Real OTPLIB token verification against the server secret
       const isValid = otplib.authenticator.check(totpCode, secret);
       if (isValid) {
-        onAuthSuccess();
+        onAuthSuccess(); // Grants access to the Dashboard
       } else {
         setError('Invalid or expired time-based token.');
-        setIsLoading(false);
       }
     } catch (err) {
       setError('Internal Synchronization Error.');
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center p-6 z-[9999] overflow-y-auto">
+    <div className="fixed inset-0 flex items-center justify-center p-4 md:p-10 z-[9999] overflow-y-auto">
       <LoginBackground />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md bg-white rounded-[48px] p-10 sm:p-12 shadow-[0_32px_80px_-16px_rgba(0,0,0,0.12)] border border-[#EAEAEA] relative z-10 my-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-4xl flex flex-col md:flex-row bg-white rounded-xl shadow-[0_32px_80px_-16px_rgba(0,0,0,0.5)] relative z-10 overflow-hidden min-h-[500px]"
       >
-        <header className="flex flex-col items-center mb-10 text-center">
-          <div className="w-16 h-16 bg-[#111111] rounded-2xl flex items-center justify-center mb-6 shadow-xl relative overflow-hidden group">
-            <Shield className="text-white z-10" size={32} strokeWidth={2.5} />
-            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent group-hover:scale-110 transition-transform"></div>
+        
+        {/* LEFT PANE: Branding exactly matching the image layout */}
+        <div className="hidden md:flex flex-col w-5/12 bg-white border-r border-[#E5E7EB] relative">
+          <div className="flex-1 flex flex-col items-center justify-center p-12">
+            <PagoraLogo />
           </div>
-          <h1 className="font-serif text-[42px] leading-[1.05] tracking-tighter font-bold text-[#111111] mb-2">Internal Access</h1>
-          <p className="text-[13px] font-sans font-semibold text-[#888888] tracking-widest uppercase">System Layer 0{step}</p>
-        </header>
+          
+          {/* Footer matching "Content Management System" */}
+          <div className="w-full border-t border-[#E5E7EB] py-4 px-6">
+            <p className="text-[11px] font-sans font-bold tracking-wide text-[#666666]">Content Management System</p>
+          </div>
+        </div>
 
-        <AnimatePresence mode="wait">
-          {step === 1 ? (
-            <motion.form 
-              key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-              onSubmit={handleInitialAuth} className="space-y-6"
-            >
-              <div>
-                <label className="text-[11px] uppercase font-bold tracking-[0.2em] text-[#888888] mb-2 block ml-1">System Identity</label>
-                <input 
-                  type="email" placeholder="admin@pagora.ai" required value={email} onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-[#F5F5F7] px-6 py-5 rounded-2xl outline-none font-medium text-[#111111] focus:ring-2 ring-[#111111] transition-all" 
-                />
-              </div>
-              <div>
-                <label className="text-[11px] uppercase font-bold tracking-[0.2em] text-[#888888] mb-2 block ml-1">Security Key</label>
-                <input 
-                  type="password" placeholder="••••••••" required value={password} onChange={e => setPassword(e.target.value)}
-                  className="w-full bg-[#F5F5F7] px-6 py-5 rounded-2xl outline-none font-medium text-[#111111] focus:ring-2 ring-[#111111] transition-all" 
-                />
-              </div>
-              
-              {error && (
-                <div className="flex items-center gap-2 text-[#FF3B30] text-xs font-bold bg-[#FF3B30]/10 p-4 rounded-xl">
-                  <AlertCircle size={16} /> {error}
-                </div>
-              )}
-              
-              <button 
-                disabled={isLoading}
-                className="w-full bg-[#111111] text-white py-5 rounded-full font-bold text-[15px] flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-xl outline-none"
+        {/* RIGHT PANE: Interactive Authentication Forms matching the image layout */}
+        <div className="w-full md:w-7/12 p-10 md:p-14 flex flex-col justify-center bg-white relative">
+          
+          <AnimatePresence mode="wait">
+            {step === 1 ? (
+              /* --- Step 1: Firebase Identity Form --- */
+              <motion.form 
+                key="step1" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
+                onSubmit={handleInitialAuth} className="space-y-5"
               >
-                {isLoading ? 'Decrypting Access...' : <>Request TOTP Auth <ArrowRight size={18} /></>}
-              </button>
-            </motion.form>
-          ) : (
-            <motion.form 
-              key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-              onSubmit={verifyTOTP} className="flex flex-col items-center"
-            >
-              <div className="bg-[#FFFFFF] p-6 rounded-[40px] border border-[#EAEAEA] shadow-inner mb-8 relative group cursor-help">
-                <QRCodeSVG value={otpauth} size={180} level="H" includeMargin />
-                <div className="absolute inset-0 bg-white/70 backdrop-blur-md opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity rounded-[40px] p-4 text-center">
-                  <Smartphone size={32} className="text-[#111111] mb-2" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#111111]">Authenticator Scan</p>
+                <div>
+                  <label className="text-[13px] font-bold text-[#333333] mb-2 block">Email Address</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[16px] text-[#999999] opacity-80">✉</span>
+                    <input 
+                      type="email" placeholder="Enter your email" required value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full bg-white px-10 py-3 rounded-md outline-none text-[14px] text-[#333333] border border-[#D1D5DB] focus:border-[#6B7280] transition-colors" 
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="text-center mb-8 px-4">
-                <p className="text-[14px] font-bold text-[#111111] mb-1">Time-Based Token</p>
-                <p className="text-[12px] text-[#888888] leading-relaxed">Enter the 6-digit code from your system security app.</p>
-              </div>
-              
-              <input 
-                type="text" placeholder="000000" maxLength="6" required value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))}
-                className="w-full bg-[#F5F5F7] text-center text-[42px] tracking-[0.4em] font-serif font-bold py-6 rounded-3xl outline-none border-2 border-transparent focus:border-[#111111] transition-all mb-6" 
-              />
-              
-              {error && (
-                <div className="w-full flex items-center gap-2 text-[#FF3B30] text-xs font-bold bg-[#FF3B30]/10 p-4 rounded-xl mb-6 text-center justify-center">
-                  <AlertCircle size={16} /> {error}
+                <div>
+                  <label className="text-[13px] font-bold text-[#333333] mb-2 block">Password</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-[45%] text-[16px] text-[#999999] opacity-80" style={{ transform: 'translateY(-50%) rotate(45deg)' }}>⚿</span>
+                    <input 
+                      type={showPassword ? "text" : "password"} placeholder="Enter your password" required value={password} onChange={e => setPassword(e.target.value)}
+                      className="w-full bg-white px-10 py-3 rounded-md outline-none text-[14px] text-[#333333] border border-[#D1D5DB] focus:border-[#6B7280] transition-colors" 
+                    />
+                  </div>
                 </div>
-              )}
+                
+                <div className="flex justify-between items-center pt-1 pb-2">
+                  <label className="flex items-center gap-2 text-[12px] font-bold text-[#666666] cursor-pointer">
+                    <input type="checkbox" className="rounded-sm border-[#D1D5DB] text-[#9CA3AF] focus:ring-0 w-3.5 h-3.5 cursor-pointer" />
+                    Remember me
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[12px] font-bold text-[#333333] hover:text-[#000000] transition-colors"
+                  >
+                    Show Password
+                  </button>
+                </div>
 
-              <button 
-                disabled={isLoading}
-                className="w-full bg-[#1E6FEA] text-white py-5 rounded-full font-bold text-[15px] flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-pill outline-none"
-              >
-                {isLoading ? 'Verifying Identity...' : <>Authorize Portal <CheckCircle2 size={18} /></>}
-              </button>
+                {error && (
+                  <div className="text-[#FF3B30] text-[12px] font-bold text-center">
+                    {error}
+                  </div>
+                )}
+                
+                <button 
+                  disabled={isLoading}
+                  className="w-full bg-[#9CA3AF] hover:bg-[#6B7280] text-white py-3.5 rounded-md font-bold text-[13px] flex items-center justify-center gap-2 transition-colors outline-none"
+                >
+                  {isLoading ? 'Authenticating...' : <>Login to my account <span className="text-[16px] leading-none mb-[2px]">→</span></>}
+                </button>
 
-              <button 
-                type="button" onClick={() => setStep(1)} 
-                className="mt-6 text-[13px] font-bold text-[#888888] hover:text-[#111111] transition-colors outline-none"
+                <div className="pt-3">
+                  <button type="button" className="text-[12px] text-[#888888] font-medium hover:text-[#333333] transition-colors">
+                    Forgot your password?
+                  </button>
+                </div>
+              </motion.form>
+            ) : (
+              /* --- Step 2: TOTP 2FA Verification Form --- */
+              <motion.form 
+                key="step2" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                onSubmit={verifyTOTP} className="flex flex-col w-full h-full justify-center"
               >
-                Return to Credentials
-              </button>
-            </motion.form>
-          )}
-        </AnimatePresence>
+                <div className="flex justify-center mb-6">
+                  <div className="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm">
+                    <QRCodeSVG value={otpauth} size={140} level="H" includeMargin className="rounded-lg" />
+                  </div>
+                </div>
+
+                <div className="text-center mb-6">
+                  <label className="text-[13px] font-bold text-[#333333] mb-2 block">Authenticator Code</label>
+                  <input 
+                    type="text" placeholder="000000" maxLength="6" required value={totpCode} onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))}
+                    className="w-full bg-white text-center text-[28px] tracking-[0.5em] font-mono font-bold py-3 rounded-md outline-none border border-[#D1D5DB] focus:border-[#6B7280] transition-colors" 
+                  />
+                </div>
+                
+                {error && (
+                  <div className="text-[#FF3B30] text-[12px] font-bold text-center mb-4">
+                    {error}
+                  </div>
+                )}
+
+                <button 
+                  disabled={isLoading}
+                  className="w-full bg-[#9CA3AF] hover:bg-[#6B7280] text-white py-3.5 rounded-md font-bold text-[13px] flex items-center justify-center gap-2 transition-colors outline-none mb-4"
+                >
+                  {isLoading ? 'Verifying Identity...' : <>Authorize Portal <span className="text-[16px] leading-none mb-[2px]">→</span></>}
+                </button>
+
+                <div className="text-center">
+                  <button 
+                    type="button" onClick={() => { setStep(1); setError(''); setTotpCode(''); setPassword(''); }} 
+                    className="text-[12px] text-[#888888] font-medium hover:text-[#333333] transition-colors"
+                  >
+                    Cancel & Return
+                  </button>
+                </div>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
     </div>
   );
