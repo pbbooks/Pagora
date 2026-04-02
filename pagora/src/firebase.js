@@ -7,8 +7,8 @@
 import { initializeApp } from "firebase/app";
 
 // SECTION 2: Identity & Access Management Module
-// Strictly imports the Auth SDK for the dual-layer superuser login gate.
-import { getAuth } from "firebase/auth";
+// Strictly imports the Auth SDK and SSO Providers (Google/Apple) for the dual-layer superuser login gate.
+import { getAuth, GoogleAuthProvider, OAuthProvider } from "firebase/auth";
 
 // SECTION 3: Live Document Storage Architecture
 // Imports Firestore for potential real-time configuration syncing in the admin layer.
@@ -43,9 +43,11 @@ const firebaseConfig = {
 // Bootstraps the live Firebase instance into application memory.
 const app = initializeApp(firebaseConfig);
 
-// SECTION 9: Authentication & Database Payload Exports
-// Exposes the locked-down Auth and DB instances for the Admin Portal components.
+// SECTION 9: Authentication, Providers & Database Payload Exports
+// Exposes the locked-down Auth instance, SSO providers, and DB for the Admin Portal components.
 export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+export const appleProvider = new OAuthProvider('apple.com');
 export const db = getFirestore(app);
 
 // SECTION 10: Environment-Aware Analytics Initialization
