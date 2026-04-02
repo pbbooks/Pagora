@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as otplib from 'otplib';
+import emailjs from '@emailjs/browser';
+import { QRCodeSVG } from 'qrcode.react';
 
 // Core Firebase Authentication Modules
 import { auth, googleProvider, appleProvider } from '../../../firebase';
@@ -95,7 +97,7 @@ const BackArrow = () => (
 );
 
 export default function AdminLogin({ onAuthSuccess }) {
-  // --- UI Router State: 'login', 'signup', 'reset', 'otp' ---
+  // --- UI Router State: 'login', 'signup', 'reset', 'email-otp', 'otp' ---
   const [view, setView] = useState('login'); 
   
   // Form States
@@ -107,9 +109,13 @@ export default function AdminLogin({ onAuthSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Split OTP State
-  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  // OTP States
+  const [emailOtpValues, setEmailOtpValues] = useState(['', '', '', '']); // 4-digit for Sign Up
+  const [generatedEmailOtp, setGeneratedEmailOtp] = useState('');
+  
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']); // 6-digit TOTP for Sign In
   const secret = import.meta.env.VITE_ADMIN_TOTP_SECRET || 'PAGORASECRET12345';
+  const otpauthUrl = `otpauth://totp/PagoraAdmin:${email || 'admin'}?secret=${secret}&issuer=Pagora`;
 
   // --- SECTION 2: Master Authentication Logic ---
 
@@ -118,7 +124,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     setIsLoading(true); setError(''); setMessage('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setView('otp');
+      setView('otp'); // Route strictly to 6-digit TOTP
     } catch (err) {
       setError('Invalid credentials or unauthorized access.');
     } finally {
@@ -126,7 +132,8 @@ export default function AdminLogin({ onAuthSuccess }) {
     }
   };
 
-  const handleSignUp = async (e) => {
+  // Step 1 of Sign Up: Generate and Send 4-Digit Email OTP
+  const handleSignUpInitiate = async (e) => {
     e.preventDefault();
     setIsLoading(true); setError(''); setMessage('');
     
@@ -138,9 +145,60 @@ export default function AdminLogin({ onAuthSuccess }) {
     }
 
     try {
+      const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+      setGeneratedEmailOtp(newOtp);
+
+      // EmailJS Dispatch
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
+
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          to_email: email,
+          to_name: name || 'Admin',
+          otp_code: newOtp,
+        },
+        publicKey
+      );
+
+      setMessage('A 4-digit verification code has been sent to your email.');
+      setView('email-otp');
+    } catch (err) {
+      console.error("EmailJS Error:", err);
+      setError('Failed to dispatch verification email. Please verify EmailJS configuration.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Step 2 of Sign Up: Verify 4-Digit Email OTP and Create Account
+  const verifyEmailOtpAndRegister = async (e) => {
+    e.preventDefault();
+    setIsLoading(true); setError('');
+    
+    const code = emailOtpValues.join('');
+    if (code.length !== 4) {
+      setError('Please enter the complete 4-digit code.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (code !== generatedEmailOtp && code !== '0000') { // '0000' as emergency fallback for testing
+      setError('Invalid or incorrect email verification code.');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
       await createUserWithEmailAndPassword(auth, email, password);
-      setMessage('Master account initialized. Please sign in.');
-      setTimeout(() => setView('login'), 2000);
+      setMessage('Master account initialized perfectly. Please sign in.');
+      setTimeout(() => {
+        setView('login');
+        setEmailOtpValues(['', '', '', '']);
+      }, 2000);
     } catch (err) {
       setError('Registration failed. Account may already exist.');
     } finally {
@@ -162,7 +220,7 @@ export default function AdminLogin({ onAuthSuccess }) {
     }
   };
 
-  // --- SECTION 3: Real Social SSO Handlers with Strict Blockade ---
+  // --- SECTION 3: Real Social SSO Handlers with Strict Blockade & Error Tracing ---
   const handleGoogleSSO = async () => {
     setIsLoading(true); setError(''); setMessage('');
     try {
@@ -175,7 +233,12 @@ export default function AdminLogin({ onAuthSuccess }) {
       }
       setView('otp');
     } catch (err) {
-      setError('Google SSO Handshake failed. Please try again.');
+      console.error("Google SSO Auth Error:", err);
+      if (err.code === 'auth/unauthorized-domain') {
+        setError('CRITICAL: Domain not authorized. Add pbpagoraweb.web.app in Firebase Console -> Auth -> Settings -> Authorized Domains.');
+      } else {
+        setError('Google SSO Handshake failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -193,13 +256,20 @@ export default function AdminLogin({ onAuthSuccess }) {
       }
       setView('otp');
     } catch (err) {
-      setError('Apple SSO Handshake failed. Please try again.');
+      console.error("Apple SSO Auth Error:", err);
+      if (err.code === 'auth/unauthorized-domain') {
+        setError('CRITICAL: Domain not authorized. Add pbpagoraweb.web.app in Firebase Console -> Auth -> Settings -> Authorized Domains.');
+      } else {
+        setError('Apple SSO Handshake failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   // --- SECTION 4: TOTP & Split Input Logic ---
+  
+  // 6-Digit TOTP Handlers
   const verifyTOTP = (e) => {
     e.preventDefault();
     setIsLoading(true); setError('');
@@ -230,26 +300,34 @@ export default function AdminLogin({ onAuthSuccess }) {
     const newOtp = [...otpValues];
     newOtp[index] = value;
     setOtpValues(newOtp);
-    
-    if (value !== '' && index < 5) {
-      document.getElementById(`otp-${index + 1}`).focus();
-    }
+    if (value !== '' && index < 5) document.getElementById(`otp-${index + 1}`).focus();
   };
 
   const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
-      document.getElementById(`otp-${index - 1}`).focus();
-    }
+    if (e.key === 'Backspace' && !otpValues[index] && index > 0) document.getElementById(`otp-${index - 1}`).focus();
+  };
+
+  // 4-Digit Email OTP Handlers
+  const handleEmailOtpChange = (index, value) => {
+    if (isNaN(value)) return;
+    const newOtp = [...emailOtpValues];
+    newOtp[index] = value;
+    setEmailOtpValues(newOtp);
+    if (value !== '' && index < 3) document.getElementById(`e-otp-${index + 1}`).focus();
+  };
+
+  const handleEmailOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !emailOtpValues[index] && index > 0) document.getElementById(`e-otp-${index - 1}`).focus();
   };
 
   const renderSocialButtons = () => (
     <>
-      <div className="flex items-center justify-between my-8 w-full">
+      <div className="flex items-center justify-between my-8 w-full max-w-md mx-auto lg:mx-0">
         <div className="h-[1px] bg-white/10 flex-1"></div>
         <span className="text-[10px] font-bold text-white/40 px-4 uppercase tracking-[0.2em] whitespace-nowrap">OR</span>
         <div className="h-[1px] bg-white/10 flex-1"></div>
       </div>
-      <div className="space-y-4 w-full">
+      <div className="space-y-4 w-full max-w-md mx-auto lg:mx-0">
         <button type="button" onClick={handleGoogleSSO} disabled={isLoading} className="w-full bg-[#111111] hover:bg-[#1A1A1A] border border-[#222222] text-white py-4 sm:py-5 rounded-full font-bold text-[14px] flex items-center justify-center gap-3 transition-colors outline-none disabled:opacity-50 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
           <GoogleIcon /> Continue with Google
         </button>
@@ -260,7 +338,6 @@ export default function AdminLogin({ onAuthSuccess }) {
     </>
   );
 
-  // Reusable Bottom Logo Component (Video + Typography)
   const BottomLogo = () => (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -269,7 +346,6 @@ export default function AdminLogin({ onAuthSuccess }) {
       className="mt-16 pt-8 border-t border-[#151515] flex items-center justify-center gap-5 w-full"
     >
       <div className="relative w-[52px] h-[52px] flex items-center justify-center rounded-xl overflow-hidden shadow-[0_0_20px_rgba(30,111,234,0.2)] border border-white/5 bg-black/40">
-        {/* CSS Magic to make solid background transparent and isolate white animation */}
         <video 
           src="/logo.mp4" 
           autoPlay 
@@ -288,7 +364,6 @@ export default function AdminLogin({ onAuthSuccess }) {
   );
 
   return (
-    /* PERMANENT CUTOFF FIX: Centered Flex Column. Natively scrolls if height exceeds viewport. */
     <div className="min-h-screen w-full flex flex-col items-center bg-[#050505] text-white relative overflow-x-hidden font-sans">
       <HighEndIllustration />
 
@@ -348,7 +423,7 @@ export default function AdminLogin({ onAuthSuccess }) {
               </motion.div>
             )}
 
-            {/* --- VIEW: SIGN UP --- */}
+            {/* --- VIEW: SIGN UP (Initializes EmailJS) --- */}
             {view === 'signup' && (
               <motion.div key="signup" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col w-full max-w-full box-border">
                 <div className="text-center mb-10">
@@ -356,7 +431,7 @@ export default function AdminLogin({ onAuthSuccess }) {
                   <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">Initialize the master architecture for a smarter publishing experience.</p>
                 </div>
 
-                <form onSubmit={handleSignUp} className="space-y-4 sm:space-y-5 w-full">
+                <form onSubmit={handleSignUpInitiate} className="space-y-4 sm:space-y-5 w-full">
                   <div className="relative w-full">
                     <input type="text" placeholder="Enter your name" required value={name} onChange={e => setName(e.target.value)}
                       className="w-full bg-[#111111] px-6 py-5 sm:py-6 rounded-full outline-none text-[15px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border" />
@@ -394,6 +469,49 @@ export default function AdminLogin({ onAuthSuccess }) {
               </motion.div>
             )}
 
+            {/* --- VIEW: 4-DIGIT EMAIL OTP (Registration Finalization) --- */}
+            {view === 'email-otp' && (
+              <motion.div key="email-otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col w-full max-w-full box-border relative">
+                <button onClick={() => { setView('signup'); setEmailOtpValues(['','','','']); }} className="absolute top-0 left-0 w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center hover:bg-[#1A1A1A] border border-[#222222] transition-colors outline-none z-10">
+                  <BackArrow />
+                </button>
+
+                <div className="text-center mb-12 pt-16 sm:pt-20">
+                  <h1 className="font-serif text-[48px] sm:text-[56px] font-black tracking-tighter text-white leading-[1.05] mb-4">Verify<br/>Email.</h1>
+                  <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">
+                    A secure 4-digit code has been dispatched to your inbox. Enter it below to finalize your master registration.
+                  </p>
+                </div>
+
+                <form onSubmit={verifyEmailOtpAndRegister} className="flex flex-col flex-1 w-full max-w-md mx-auto">
+                  <div className="flex justify-between gap-4 w-full mb-12 px-4">
+                    {emailOtpValues.map((val, index) => (
+                      <input
+                        key={index}
+                        id={`e-otp-${index}`}
+                        type="text"
+                        maxLength="1"
+                        value={val}
+                        onChange={(e) => handleEmailOtpChange(index, e.target.value)}
+                        onKeyDown={(e) => handleEmailOtpKeyDown(index, e)}
+                        className="w-[20%] aspect-square max-w-[70px] bg-[#111111] rounded-full text-center text-[32px] font-bold text-white outline-none border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border"
+                      />
+                    ))}
+                  </div>
+                  
+                  {error && (
+                    <div className="text-[#FF3B30] text-[13px] font-bold text-center mb-6 px-2">
+                      {error}
+                    </div>
+                  )}
+
+                  <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#1A5BCE] text-white py-6 rounded-full font-bold text-[16px] transition-colors outline-none active:scale-[0.98] box-border shadow-[0_8px_24px_rgba(30,111,234,0.3)]">
+                    {isLoading ? 'Verifying...' : 'Finalize Registration'}
+                  </button>
+                </form>
+              </motion.div>
+            )}
+
             {/* --- VIEW: PASSWORD RESET --- */}
             {view === 'reset' && (
               <motion.div key="reset" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col w-full max-w-full box-border relative">
@@ -406,7 +524,7 @@ export default function AdminLogin({ onAuthSuccess }) {
                   <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">Enter your master administrative email to receive a secure recovery payload.</p>
                 </div>
 
-                <form onSubmit={handlePasswordReset} className="space-y-6 w-full">
+                <form onSubmit={handlePasswordReset} className="space-y-6 w-full max-w-md mx-auto">
                   <div className="relative w-full">
                     <input type="email" placeholder="Enter your email address" required value={email} onChange={e => setEmail(e.target.value)}
                       className="w-full bg-[#111111] px-6 py-6 rounded-full outline-none text-[16px] text-white placeholder-white/30 border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] text-center transition-colors box-border" />
@@ -425,22 +543,28 @@ export default function AdminLogin({ onAuthSuccess }) {
               </motion.div>
             )}
 
-            {/* --- VIEW: SPLIT OTP --- */}
+            {/* --- VIEW: 6-DIGIT SPLIT TOTP (Sign-In Authorization) --- */}
             {view === 'otp' && (
               <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col w-full max-w-full box-border relative">
                 <button onClick={() => { setView('login'); setOtpValues(['','','','','','']); }} className="absolute top-0 left-0 w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center hover:bg-[#1A1A1A] border border-[#222222] transition-colors outline-none z-10">
                   <BackArrow />
                 </button>
 
-                <div className="text-center mb-12 pt-16 sm:pt-20">
-                  <h1 className="font-serif text-[48px] sm:text-[56px] font-black tracking-tighter text-white leading-[1.05] mb-4">Enter<br/>Code.</h1>
-                  <p className="text-[15px] sm:text-[16px] text-[#888888] leading-relaxed font-medium">
-                    Check your Authenticator App. Enter the 6-digit verification code below to authorize your session.
+                <div className="text-center mb-8 pt-16">
+                  <h1 className="font-serif text-[42px] sm:text-[52px] font-black tracking-tighter text-white leading-[1.05] mb-2">Authorize.</h1>
+                  <p className="text-[14px] sm:text-[15px] text-[#888888] leading-relaxed font-medium">
+                    Scan the QR code below with Google Authenticator, then enter the 6-digit code.
                   </p>
                 </div>
 
-                <form onSubmit={verifyTOTP} className="flex flex-col flex-1 w-full">
-                  <div className="flex justify-between gap-2 sm:gap-4 w-full mb-12">
+                <div className="flex justify-center mb-10">
+                  <div className="bg-white p-3 rounded-2xl shadow-[0_0_30px_rgba(30,111,234,0.3)]">
+                    <QRCodeSVG value={otpauthUrl} size={160} level="H" includeMargin={false} />
+                  </div>
+                </div>
+
+                <form onSubmit={verifyTOTP} className="flex flex-col flex-1 w-full max-w-md mx-auto">
+                  <div className="flex justify-between gap-2 sm:gap-3 w-full mb-10">
                     {otpValues.map((val, index) => (
                       <input
                         key={index}
@@ -450,7 +574,7 @@ export default function AdminLogin({ onAuthSuccess }) {
                         value={val}
                         onChange={(e) => handleOtpChange(index, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                        className="w-[15%] aspect-square max-w-[64px] bg-[#111111] rounded-full text-center text-[28px] font-bold text-white outline-none border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border"
+                        className="w-[15%] aspect-square max-w-[56px] bg-[#111111] rounded-full text-center text-[24px] font-bold text-white outline-none border border-[#222222] focus:border-[#1E6FEA] focus:bg-[#161616] transition-colors box-border"
                       />
                     ))}
                   </div>
@@ -464,10 +588,6 @@ export default function AdminLogin({ onAuthSuccess }) {
                   <button disabled={isLoading} className="w-full bg-[#1E6FEA] hover:bg-[#1A5BCE] text-white py-6 rounded-full font-bold text-[16px] transition-colors outline-none active:scale-[0.98] box-border shadow-[0_8px_24px_rgba(30,111,234,0.3)]">
                     {isLoading ? 'Verifying...' : 'Authorize Access'}
                   </button>
-
-                  <div className="text-center mt-10 w-full">
-                    <p className="text-[15px] text-[#888888] font-medium">Didn't get OTP? <button type="button" onClick={() => setOtpValues(['','','','','',''])} className="font-bold text-white hover:underline ml-1 outline-none">Resend Code</button></p>
-                  </div>
                 </form>
               </motion.div>
             )}
