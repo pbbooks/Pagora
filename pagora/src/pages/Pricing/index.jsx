@@ -78,13 +78,17 @@ export default function PricingPage({ onNavigate }) {
   const [selectedPlan, setSelectedPlan] = useState('standard');
   const [openFaq, setOpenFaq] = useState(null);
 
-  // Core Routing Logic to Payment Gateway
+  // Core Routing Logic to Payment Gateway - SANITIZED TO PREVENT DATA CLONE ERROR
   const handleContinue = () => {
     if (selectedPlan === 'free') {
       onNavigate('home');
     } else {
       const planDetails = PLANS.find(p => p.id === selectedPlan);
-      onNavigate('payment', { plan: planDetails, cycle: billingCycle });
+      
+      // FIX: Destructure out the unclonable React 'icon' element before routing state
+      const { icon, ...sanitizedPlanDetails } = planDetails;
+      
+      onNavigate('payment', { plan: sanitizedPlanDetails, cycle: billingCycle });
     }
   };
 
