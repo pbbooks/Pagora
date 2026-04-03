@@ -6,6 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import Showcase from './pages/Showcase';
 import PricingPage from './pages/Pricing';
 import PaymentPage from './pages/Payment';
+import PaymentStatus from './pages/Payment/Status';
 
 // Admin Components
 import AdminLogin from './pages/Admin/Login';
@@ -48,6 +49,11 @@ export default function App() {
           <Route path="/" element={<Showcase />} />
           <Route path="/pricing" element={<PricingPage onNavigate={handleNavigate} />} />
           <Route path="/payment" element={<PaymentPage onNavigate={handleNavigate} />} />
+
+          {/* EXACT PATH: PayU Transaction Outcome Intercepts */}
+          <Route path="/payment/success" element={<PaymentStatus />} />
+          <Route path="/payment/failure" element={<PaymentStatus />} />
+          <Route path="/payment/pending" element={<PaymentStatus />} />
 
           {/* EXACT PATH: Secure Admin Layer Authentication */}
           <Route 
