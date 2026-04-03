@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // Firebase Imports (Real Logic & Real Time)
-import { db } from '../../../../../firebase';
+import { db } from '../../../../firebase';
 import { collection, query, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export default function AdminUsers() {
