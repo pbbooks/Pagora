@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ShieldCheck, Lock, CreditCard, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShieldCheck, Lock, CreditCard, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
 
 // --- SAFE ENVIRONMENT ACCESSOR ---
 // Safely retrieves environment variables without triggering es2015 compiler warnings
